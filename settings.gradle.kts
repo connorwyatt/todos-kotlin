@@ -1,5 +1,6 @@
 rootProject.name = "todos"
 include("common")
+include("data")
 include("restapi:app")
 include("restapi:client")
 include("restapi:models")
