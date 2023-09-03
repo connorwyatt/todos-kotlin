@@ -1,6 +1,4 @@
-plugins {
-    id("org.jetbrains.kotlin.jvm")
-}
+plugins { id("org.jetbrains.kotlin.jvm") }
 
 dependencies {
     implementation(project(":common"))

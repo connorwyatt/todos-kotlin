@@ -5,6 +5,7 @@ plugins {
 }
 
 group = "io.connorwyatt.todos.restapi.app"
+
 version = "0.0.1"
 
 application {

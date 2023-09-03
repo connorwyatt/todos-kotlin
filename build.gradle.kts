@@ -27,7 +27,7 @@ subprojects {
 
     spotless {
         kotlin {
-            target("**/*.kt")
+            target("**/*.kt", "**/*.kts")
             ktfmt(project.properties["ktfmtVersion"] as String).kotlinlangStyle()
         }
     }
