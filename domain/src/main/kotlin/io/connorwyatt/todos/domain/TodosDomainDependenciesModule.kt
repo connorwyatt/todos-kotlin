@@ -9,11 +9,7 @@ val todosDomainDependenciesModule by
     DI.Module {
         onReady {
             instance<EventMap>()
-                .registerEventMappings(
-                    mapOf(
-                        TodoAdded.type to TodoAdded::class,
-                        TodoCompleted.type to TodoCompleted::class
-                    )
-                )
+                .registerEvent<TodoAdded>(TodoAdded.type)
+                .registerEvent<TodoCompleted>(TodoCompleted.type)
         }
     }

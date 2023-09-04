@@ -12,8 +12,8 @@ class EventsRepository(
     private val eventStoreClient: EventStoreClientWrapper,
     private val eventMap: EventMap,
 ) {
-    suspend fun readStream(streamId: String): List<EventEnvelope<Event>> {
-        val result = eventStoreClient.readStream(streamId, readStreamOptions)
+    suspend fun readStream(streamName: String): List<EventEnvelope<Event>> {
+        val result = eventStoreClient.readStream(streamName, readStreamOptions)
 
         return when (result) {
             is EventStoreClientWrapper.ReadResult.Failure -> emptyList()

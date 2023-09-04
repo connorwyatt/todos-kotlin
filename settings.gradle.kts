@@ -47,6 +47,9 @@ dependencyResolutionManagement {
             library("logback-classic", "ch.qos.logback", "logback-classic").version(logbackVersion)
             library("kodein-di", "org.kodein.di", "kodein-di").version(kodeinVersion)
             library("kodein-di-framework-ktor-server", "org.kodein.di", "kodein-di-framework-ktor-server-jvm").version(kodeinVersion)
+            library("kotlin-reflect", "org.jetbrains.kotlin", "kotlin-reflect").version(
+                kotlinVersion
+            )
             library("kotlinx-serialization-json", "org.jetbrains.kotlinx", "kotlinx-serialization-json").version(
                 kotlinxSerializationVersion
             )

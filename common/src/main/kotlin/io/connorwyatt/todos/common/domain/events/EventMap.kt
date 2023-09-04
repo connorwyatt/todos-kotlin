@@ -23,11 +23,17 @@ class EventMap {
             )
     }
 
-    fun registerEventMappings(mappings: Map<VersionedEventType, KClass<out Event>>) {
-        map = map.plus(mappings)
+    fun registerEvent(versionedEventType: VersionedEventType, clazz: KClass<out Event>): EventMap {
+        map = map.plus(versionedEventType to clazz)
 
         if (map.values.distinct().count() != map.count()) {
-            throw Exception("Multiple EventMap entries registered for a single class.")
+            throw Exception("Multiple EventMap entries registered for \"$versionedEventType\".")
         }
+
+        return this
     }
+
+    inline fun <reified TEvent : Event> registerEvent(
+        versionedEventType: VersionedEventType
+    ): EventMap = registerEvent(versionedEventType, TEvent::class)
 }
