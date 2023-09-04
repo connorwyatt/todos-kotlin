@@ -32,6 +32,7 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
     versionCatalogs {
+        val eventStoreClientVersion: String by settings
         val logbackVersion: String by settings
         val kodeinVersion: String by settings
         val kotlinVersion: String by settings
@@ -40,6 +41,7 @@ dependencyResolutionManagement {
         val striktVersion: String by settings
 
         create("libraries") {
+            library("eventStore-client", "com.eventstore", "db-client-java").version(eventStoreClientVersion)
             library("logback-classic", "ch.qos.logback", "logback-classic").version(logbackVersion)
             library("kodein-di", "org.kodein.di", "kodein-di").version(kodeinVersion)
             library("kodein-di-framework-ktor-server", "org.kodein.di", "kodein-di-framework-ktor-server-jvm").version(kodeinVersion)

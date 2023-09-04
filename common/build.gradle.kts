@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(libraries.eventStore.client)
     implementation(libraries.kodein.di)
     implementation(libraries.kotlinx.serialization.json)
     implementation(libraries.ktor.client.cio)
