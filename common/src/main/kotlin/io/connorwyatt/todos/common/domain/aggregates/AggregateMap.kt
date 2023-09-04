@@ -2,7 +2,7 @@ package io.connorwyatt.todos.common.domain.aggregates
 
 import kotlin.reflect.KClass
 
-class CategoryMap {
+class AggregateMap {
     private var map = mapOf<String, KClass<out Aggregate>>()
 
     fun <TAggregate : Aggregate> categoryFor(aggregate: TAggregate): String =
@@ -15,16 +15,16 @@ class CategoryMap {
     inline fun <reified TAggregate : Aggregate> categoryFor(): String =
         categoryFor(TAggregate::class)
 
-    fun registerCategory(category: String, clazz: KClass<out Aggregate>): CategoryMap {
+    fun registerAggregate(category: String, clazz: KClass<out Aggregate>): AggregateMap {
         map = map.plus(category to clazz)
 
         if (map.values.distinct().count() != map.count()) {
-            throw Exception("Multiple CategoryMap entries registered for \"$category\".")
+            throw Exception("Multiple AggregateMap entries registered for \"$category\".")
         }
 
         return this
     }
 
-    inline fun <reified TAggregate : Aggregate> registerCategory(category: String): CategoryMap =
-        registerCategory(category, TAggregate::class)
+    inline fun <reified TAggregate : Aggregate> registerAggregate(category: String): AggregateMap =
+        registerAggregate(category, TAggregate::class)
 }

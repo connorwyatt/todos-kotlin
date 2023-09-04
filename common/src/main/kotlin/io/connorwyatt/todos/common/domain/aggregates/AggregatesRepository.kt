@@ -6,10 +6,10 @@ import kotlin.reflect.full.createType
 
 class AggregatesRepository(
     private val eventsRepository: EventsRepository,
-    private val categoryMap: CategoryMap
+    private val aggregateMap: AggregateMap
 ) {
     suspend fun <TAggregate : Aggregate> load(clazz: KClass<TAggregate>, id: String): TAggregate {
-        val category = categoryMap.categoryFor(clazz)
+        val category = aggregateMap.categoryFor(clazz)
 
         val streamName = StreamNameUtilities.streamName(category, id)
 
@@ -31,7 +31,7 @@ class AggregatesRepository(
             return
         }
 
-        val category = categoryMap.categoryFor(aggregate)
+        val category = aggregateMap.categoryFor(aggregate)
 
         val streamName = StreamNameUtilities.streamName(category, aggregate.id)
 
