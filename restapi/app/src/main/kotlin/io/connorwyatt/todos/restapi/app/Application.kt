@@ -13,11 +13,11 @@ import org.kodein.di.*
 import org.kodein.di.ktor.*
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "localhost") { module(applicationDIConfiguration) }
+    embeddedServer(Netty, port = 8080, host = "localhost") { module(applicationDependenciesModule) }
         .start(wait = true)
 }
 
-val applicationDIConfiguration = DI {
+val applicationDependenciesModule = DI {
     import(commonDependenciesModule)
     import(todosDataDependenciesModule)
     bind<TodosService> { provider { TodosService(instance(), instance(), instance()) } }
