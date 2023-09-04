@@ -2,6 +2,7 @@ package io.connorwyatt.todos.restapi.app
 
 import io.connorwyatt.todos.common.commonDependenciesModule
 import io.connorwyatt.todos.data.todosDataDependenciesModule
+import io.connorwyatt.todos.domain.todosDomainDependenciesModule
 import io.connorwyatt.todos.restapi.app.mapping.TodoMapper
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -20,6 +21,7 @@ fun main() {
 val applicationDependenciesModule = DI {
     import(commonDependenciesModule)
     import(todosDataDependenciesModule)
+    import(todosDomainDependenciesModule)
     bind<TodosService> { provider { TodosService(instance(), instance(), instance()) } }
     bind<TodoMapper> { provider { TodoMapper() } }
 }

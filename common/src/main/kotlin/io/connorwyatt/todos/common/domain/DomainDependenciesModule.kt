@@ -18,5 +18,5 @@ val domainDependenciesModule by
         bind<EventsRepository> { provider { new(::EventsRepository) } }
         bind<EventStoreDBClient> { provider { EventStoreDBClient.create(settings) } }
         bind<EventStoreClientWrapper> { provider { new(::EventStoreClientWrapper) } }
-        bind<EventMap> { singleton { EventMap(emptyMap()) } }
+        bind<EventMap> { singleton { new(::EventMap) } }
     }

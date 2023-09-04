@@ -2,12 +2,8 @@ package io.connorwyatt.todos.common.domain.events
 
 import kotlin.reflect.KClass
 
-class EventMap(private val map: Map<VersionedEventType, KClass<out Event>>) {
-    init {
-        if (map.values.distinct().count() != map.count()) {
-            throw Exception("Multiple entries for a single class.")
-        }
-    }
+class EventMap {
+    private var map = mapOf<VersionedEventType, KClass<out Event>>()
 
     fun eventClass(versionedEventType: VersionedEventType): KClass<out Event> {
         return map[versionedEventType]
@@ -25,5 +21,13 @@ class EventMap(private val map: Map<VersionedEventType, KClass<out Event>>) {
             ?: throw Exception(
                 "Could not find VersionedEventType for Event class (${eventClass.simpleName})."
             )
+    }
+
+    fun registerEventMappings(mappings: Map<VersionedEventType, KClass<out Event>>) {
+        map = map.plus(mappings)
+
+        if (map.values.distinct().count() != map.count()) {
+            throw Exception("Multiple EventMap entries registered for a single class.")
+        }
     }
 }

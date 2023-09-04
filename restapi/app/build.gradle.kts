@@ -18,6 +18,8 @@ application {
 dependencies {
     implementation(project(":common"))
     implementation(project(":data"))
+    implementation(project(":domain"))
+    implementation(project(":domain:events"))
     implementation(project(":restapi:models"))
 
     implementation(libraries.logback.classic)
