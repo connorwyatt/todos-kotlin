@@ -35,6 +35,37 @@ class EventStoreClientWrapper(private val eventStoreDBClient: EventStoreDBClient
         return WriteResult.Success(writeResult.logPosition.commitUnsigned)
     }
 
+    fun subscribeToStream(
+        streamName: String,
+        onEvent: ((Subscription, ResolvedEvent) -> Unit)? = null,
+        onError: ((Subscription, Throwable) -> Unit)? = null,
+        onCancelled: ((Subscription) -> Unit)? = null,
+        onConfirmation: ((Subscription) -> Unit)? = null,
+        subscribeToStreamOptions: SubscribeToStreamOptions? = null
+    ) {
+        eventStoreDBClient.subscribeToStream(
+            streamName,
+            object : SubscriptionListener() {
+                override fun onEvent(subscription: Subscription, event: ResolvedEvent) {
+                    onEvent?.invoke(subscription, event)
+                }
+
+                override fun onError(subscription: Subscription, throwable: Throwable) {
+                    onError?.invoke(subscription, throwable)
+                }
+
+                override fun onCancelled(subscription: Subscription) {
+                    onCancelled?.invoke(subscription)
+                }
+
+                override fun onConfirmation(subscription: Subscription) {
+                    onConfirmation?.invoke(subscription)
+                }
+            },
+            subscribeToStreamOptions
+        )
+    }
+
     sealed interface ReadResult {
         data class Success(val events: List<ResolvedEvent>, val streamPosition: Long) : ReadResult
 
