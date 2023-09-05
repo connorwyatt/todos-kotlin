@@ -22,8 +22,8 @@ val applicationDependenciesModule = DI {
     import(commonDependenciesModule)
     import(todosDataDependenciesModule)
     import(todosDomainDependenciesModule)
-    bind<TodosService> { provider { TodosService(instance(), instance(), instance()) } }
-    bind<TodoMapper> { provider { TodoMapper() } }
+    bindProviderOf(::TodosService)
+    bindProviderOf(::TodoMapper)
 }
 
 fun Application.module(diConfiguration: DI) {

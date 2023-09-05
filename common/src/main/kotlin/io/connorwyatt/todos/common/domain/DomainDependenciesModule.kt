@@ -11,8 +11,8 @@ import org.kodein.di.*
 
 val domainDependenciesModule by
     DI.Module {
-        bind<AggregatesRepository> { singleton { new(::AggregatesRepository) } }
-        bind<AggregateMap> { singleton { new(::AggregateMap) } }
+        bindSingletonOf(::AggregatesRepository)
+        bindSingletonOf(::AggregateMap)
 
         val settings =
             EventStoreDBConnectionString.parseOrThrow(
@@ -20,8 +20,8 @@ val domainDependenciesModule by
                 "esdb://admin:changeit@localhost:2113?tls=false"
             )
 
-        bind<EventsRepository> { provider { new(::EventsRepository) } }
-        bind<EventStoreDBClient> { provider { EventStoreDBClient.create(settings) } }
-        bind<EventStoreClientWrapper> { provider { new(::EventStoreClientWrapper) } }
-        bind<EventMap> { singleton { new(::EventMap) } }
+        bindProviderOf(::EventsRepository)
+        bindProvider<EventStoreDBClient> { EventStoreDBClient.create(settings) }
+        bindProviderOf(::EventStoreClientWrapper)
+        bindSingletonOf(::EventMap)
     }

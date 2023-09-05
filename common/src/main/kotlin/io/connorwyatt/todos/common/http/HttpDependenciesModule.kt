@@ -7,6 +7,4 @@ import org.kodein.di.*
 const val DEFAULT_JSON_HTTP_CLIENT_TAG = "DEFAULT_JSON_HTTP_CLIENT"
 
 val httpDependenciesModule by
-    DI.Module {
-        bind<HttpClient>(tag = DEFAULT_JSON_HTTP_CLIENT_TAG) { provider { HttpClient(CIO) } }
-    }
+    DI.Module { bindProvider(tag = DEFAULT_JSON_HTTP_CLIENT_TAG) { HttpClient(CIO) } }
