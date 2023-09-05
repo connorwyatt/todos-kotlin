@@ -22,7 +22,7 @@ class TodosService(
     suspend fun addTodo(definition: TodoDefinition): String {
         val id = UUID.randomUUID().toString()
 
-        repository.insertTodo(DataTodo(id, definition.title, clock.now(), false, null))
+        repository.insertTodo(DataTodo(id, definition.title, clock.now(), false, null, 0))
 
         return id
     }

@@ -1,5 +1,6 @@
 package io.connorwyatt.todos.data.models
 
+import io.connorwyatt.todos.common.models.Versioned
 import java.time.Instant
 
 data class Todo(
@@ -8,4 +9,5 @@ data class Todo(
     val addedAt: Instant,
     val isComplete: Boolean,
     val completedAt: Instant?,
-)
+    override val version: Long,
+) : Versioned
