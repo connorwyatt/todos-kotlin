@@ -4,6 +4,9 @@ import com.eventstore.dbclient.EventStoreDBClient
 import com.eventstore.dbclient.EventStoreDBConnectionString
 import io.connorwyatt.todos.common.domain.aggregates.AggregateMap
 import io.connorwyatt.todos.common.domain.aggregates.AggregatesRepository
+import io.connorwyatt.todos.common.domain.eventhandlers.EventHandler
+import io.connorwyatt.todos.common.domain.eventhandlers.EventHandlerDefinition
+import io.connorwyatt.todos.common.domain.eventhandlers.EventHandlerMap
 import io.connorwyatt.todos.common.domain.events.EventMap
 import io.connorwyatt.todos.common.domain.events.EventsRepository
 import io.connorwyatt.todos.common.domain.events.ResolvedEventMapper
@@ -27,4 +30,8 @@ val domainDependenciesModule by
         bindProviderOf(::EventStoreClientWrapper)
         bindSingletonOf(::EventMap)
         bindProviderOf(::ResolvedEventMapper)
+
+        bindSet<EventHandler>()
+        bindSingletonOf(::EventHandlerMap)
+        bindSet<EventHandlerDefinition>()
     }
