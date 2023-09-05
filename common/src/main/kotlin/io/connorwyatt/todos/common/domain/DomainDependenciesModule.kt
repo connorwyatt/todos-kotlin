@@ -7,6 +7,7 @@ import io.connorwyatt.todos.common.domain.aggregates.AggregatesRepository
 import io.connorwyatt.todos.common.domain.events.EventMap
 import io.connorwyatt.todos.common.domain.events.EventsRepository
 import io.connorwyatt.todos.common.domain.events.eventstore.EventStoreClientWrapper
+import io.connorwyatt.todos.common.domain.events.eventstore.EventStoreEventsRepository
 import org.kodein.di.*
 
 val domainDependenciesModule by
@@ -20,7 +21,7 @@ val domainDependenciesModule by
                 "esdb://admin:changeit@localhost:2113?tls=false"
             )
 
-        bindProviderOf(::EventsRepository)
+        bindProvider<EventsRepository> { new(::EventStoreEventsRepository) }
         bindProvider<EventStoreDBClient> { EventStoreDBClient.create(settings) }
         bindProviderOf(::EventStoreClientWrapper)
         bindSingletonOf(::EventMap)
