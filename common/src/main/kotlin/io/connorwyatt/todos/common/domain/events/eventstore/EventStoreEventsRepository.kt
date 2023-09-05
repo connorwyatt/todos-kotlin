@@ -5,12 +5,11 @@ import com.eventstore.dbclient.EventDataBuilder
 import com.eventstore.dbclient.ExpectedRevision
 import com.eventstore.dbclient.ReadStreamOptions
 import io.connorwyatt.todos.common.domain.events.*
-import kotlinx.serialization.*
 
-@OptIn(InternalSerializationApi::class)
 class EventStoreEventsRepository(
     private val eventStoreClient: EventStoreClientWrapper,
     private val eventMap: EventMap,
+    private val resolvedEventMapper: ResolvedEventMapper
 ) : EventsRepository {
     override suspend fun readStream(streamName: String): List<EventEnvelope<out Event>> {
         val result = eventStoreClient.readStream(streamName, readStreamOptions)
@@ -18,17 +17,7 @@ class EventStoreEventsRepository(
         return when (result) {
             is EventStoreClientWrapper.ReadResult.Failure -> emptyList()
             is EventStoreClientWrapper.ReadResult.Success ->
-                result.events.map {
-                    val type = VersionedEventType.parse(it.event.eventType)
-                    val eventClass = eventMap.eventClass(type)
-                    val event =
-                        eventJson.decodeFromString(
-                            eventClass.serializer(),
-                            it.event.eventData.decodeToString()
-                        )
-
-                    EventEnvelope(event, EventMetadata.fromResolvedEvent(it))
-                }
+                result.events.map(resolvedEventMapper::map)
         }
     }
 
