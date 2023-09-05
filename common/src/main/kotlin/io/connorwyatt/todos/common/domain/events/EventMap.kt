@@ -2,38 +2,32 @@ package io.connorwyatt.todos.common.domain.events
 
 import kotlin.reflect.KClass
 
-class EventMap {
-    private var map = mapOf<VersionedEventType, KClass<out Event>>()
+class EventMap(private val definitions: Set<EventMapDefinition>) {
+    init {
+        checkForDuplicates()
+    }
 
-    fun eventClass(versionedEventType: VersionedEventType): KClass<out Event> {
-        return map[versionedEventType]
+    internal fun eventClass(versionedEventType: VersionedEventType): KClass<out Event> {
+        return definitions.singleOrNull { it.versionedEventType == versionedEventType }?.clazz
             ?: throw Exception(
                 "Could not find Event class for VersionedEventType (${versionedEventType})."
             )
     }
 
-    fun versionedEventType(event: Event): VersionedEventType {
+    internal fun versionedEventType(event: Event): VersionedEventType {
         return versionedEventType(event::class)
     }
 
-    fun versionedEventType(eventClass: KClass<out Event>): VersionedEventType {
-        return map.entries.singleOrNull { it.value == eventClass }?.key
+    internal fun versionedEventType(eventClass: KClass<out Event>): VersionedEventType {
+        return definitions.singleOrNull { it.clazz == eventClass }?.versionedEventType
             ?: throw Exception(
                 "Could not find VersionedEventType for Event class (${eventClass.simpleName})."
             )
     }
 
-    fun registerEvent(versionedEventType: VersionedEventType, clazz: KClass<out Event>): EventMap {
-        map = map.plus(versionedEventType to clazz)
-
-        if (map.values.distinct().count() != map.count()) {
-            throw Exception("Multiple EventMap entries registered for \"$versionedEventType\".")
+    private fun checkForDuplicates() {
+        if (definitions.distinctBy { it.versionedEventType }.count() != definitions.count()) {
+            throw Exception("Multiple EventMap entries registered for some VersionedEventType(s).")
         }
-
-        return this
     }
-
-    inline fun <reified TEvent : Event> registerEvent(
-        versionedEventType: VersionedEventType
-    ): EventMap = registerEvent(versionedEventType, TEvent::class)
 }
