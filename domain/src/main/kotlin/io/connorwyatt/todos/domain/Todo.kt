@@ -9,8 +9,8 @@ class Todo(id: String) : Aggregate(id) {
     private var isComplete = false
 
     init {
-        registerApplyFunction<TodoAdded>(::apply)
-        registerApplyFunction<TodoCompleted>(::apply)
+        handle<TodoAdded>(::apply)
+        handle<TodoCompleted>(::apply)
     }
 
     fun addTodo(title: String) {

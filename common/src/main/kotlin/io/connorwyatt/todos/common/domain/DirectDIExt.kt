@@ -7,8 +7,11 @@ import io.connorwyatt.todos.common.domain.events.EventMap
 import io.connorwyatt.todos.common.domain.events.VersionedEventType
 import org.kodein.di.*
 
-inline fun <reified TAggregate : Aggregate> DirectDI.registerAggregate(category: String) {
-    instance<AggregateMap>().registerAggregate<TAggregate>(category)
+inline fun <reified TAggregate : Aggregate> DirectDI.registerAggregate(
+    category: String,
+    noinline constructor: (String) -> TAggregate
+) {
+    instance<AggregateMap>().registerAggregate<TAggregate>(category, constructor)
 }
 
 inline fun <reified TEvent : Event> DirectDI.registerEvent(versionedEventType: VersionedEventType) {

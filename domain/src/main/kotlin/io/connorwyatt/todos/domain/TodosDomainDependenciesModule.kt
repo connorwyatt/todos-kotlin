@@ -9,7 +9,7 @@ import org.kodein.di.*
 val todosDomainDependenciesModule by
     DI.Module {
         onReady {
-            registerAggregate<Todo>(Todo.category)
+            registerAggregate<Todo>(Todo.category, ::Todo)
 
             registerEvent<TodoAdded>(TodoAdded.type)
             registerEvent<TodoCompleted>(TodoCompleted.type)

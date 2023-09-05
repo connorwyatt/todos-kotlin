@@ -3,28 +3,45 @@ package io.connorwyatt.todos.common.domain.aggregates
 import kotlin.reflect.KClass
 
 class AggregateMap {
-    private var map = mapOf<String, KClass<out Aggregate>>()
+    private var definitions = emptyList<AggregateDefinition<out Aggregate>>()
 
-    fun <TAggregate : Aggregate> categoryFor(aggregate: TAggregate): String =
-        categoryFor(aggregate::class)
+    fun <TAggregate : Aggregate> registerAggregate(
+        category: String,
+        clazz: KClass<TAggregate>,
+        constructor: (String) -> TAggregate
+    ): AggregateMap {
+        definitions = definitions.plus(AggregateDefinition(category, clazz, constructor))
 
-    fun <TAggregate : Aggregate> categoryFor(clazz: KClass<TAggregate>): String =
-        map.entries.singleOrNull { it.value == clazz }?.key
-            ?: "Could not find category name for Aggregate class (${clazz.simpleName})."
+        if (definitions.distinctBy { it.category }.count() != definitions.count()) {
+            throw Exception("Multiple AggregateMap definitions registered for \"$category\".")
+        }
 
-    inline fun <reified TAggregate : Aggregate> categoryFor(): String =
-        categoryFor(TAggregate::class)
-
-    fun registerAggregate(category: String, clazz: KClass<out Aggregate>): AggregateMap {
-        map = map.plus(category to clazz)
-
-        if (map.values.distinct().count() != map.count()) {
-            throw Exception("Multiple AggregateMap entries registered for \"$category\".")
+        if (definitions.distinctBy { it.clazz }.count() != definitions.count()) {
+            throw Exception(
+                "Multiple AggregateMap definitions registered for \"${clazz.simpleName}\"."
+            )
         }
 
         return this
     }
 
-    inline fun <reified TAggregate : Aggregate> registerAggregate(category: String): AggregateMap =
-        registerAggregate(category, TAggregate::class)
+    inline fun <reified TAggregate : Aggregate> registerAggregate(
+        category: String,
+        noinline constructor: (String) -> TAggregate
+    ): AggregateMap = registerAggregate(category, TAggregate::class, constructor)
+
+    @Suppress("UNCHECKED_CAST")
+    internal fun <TAggregate : Aggregate> definitionFor(
+        clazz: KClass<TAggregate>
+    ): AggregateDefinition<TAggregate> =
+        definitions.single { it.clazz == clazz } as AggregateDefinition<TAggregate>
+
+    internal inline fun <reified TAggregate : Aggregate> definitionFor():
+        AggregateDefinition<TAggregate> = definitionFor(TAggregate::class)
+
+    internal data class AggregateDefinition<TAggregate : Aggregate>(
+        val category: String,
+        val clazz: KClass<out TAggregate>,
+        val constructor: (String) -> TAggregate
+    )
 }

@@ -23,18 +23,13 @@ abstract class Aggregate(val id: String) {
     internal fun latestSavedEventVersion(): Long? =
         savedEvents.lastOrNull()?.metadata?.streamPosition
 
-    protected fun <TEvent : Event> registerApplyFunction(
-        clazz: KClass<TEvent>,
-        function: (TEvent) -> Unit
-    ) {
+    protected fun <TEvent : Event> handle(clazz: KClass<TEvent>, function: (TEvent) -> Unit) {
         @Suppress("UNCHECKED_CAST")
         applyFunctions = applyFunctions.plus(clazz to function as (Event) -> Unit)
     }
 
-    protected inline fun <reified TEvent : Event> registerApplyFunction(
-        noinline function: (TEvent) -> Unit
-    ) {
-        registerApplyFunction(TEvent::class, function)
+    protected inline fun <reified TEvent : Event> handle(noinline function: (TEvent) -> Unit) {
+        handle(TEvent::class, function)
     }
 
     protected fun <T : Event> raiseEvent(event: T) {

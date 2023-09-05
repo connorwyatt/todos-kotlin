@@ -2,20 +2,18 @@ package io.connorwyatt.todos.common.domain.aggregates
 
 import io.connorwyatt.todos.common.domain.events.EventsRepository
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createType
 
 class AggregatesRepository(
     private val eventsRepository: EventsRepository,
     private val aggregateMap: AggregateMap
 ) {
     suspend fun <TAggregate : Aggregate> load(clazz: KClass<TAggregate>, id: String): TAggregate {
-        val category = aggregateMap.categoryFor(clazz)
-
+        val (category, _, constructor) = aggregateMap.definitionFor(clazz)
         val streamName = StreamNameUtilities.streamName(category, id)
 
-        val events = eventsRepository.readStream(streamName)
+        val aggregate = constructor.invoke(id)
 
-        val aggregate = constructAggregate(clazz, id)
+        val events = eventsRepository.readStream(streamName)
 
         aggregate.applyEvents(events)
 
@@ -31,7 +29,7 @@ class AggregatesRepository(
             return
         }
 
-        val category = aggregateMap.categoryFor(aggregate)
+        val (category) = aggregateMap.definitionFor(aggregate::class)
 
         val streamName = StreamNameUtilities.streamName(category, aggregate.id)
 
@@ -41,13 +39,4 @@ class AggregatesRepository(
             aggregate.latestSavedEventVersion()
         )
     }
-
-    // TODO: Replace reflection.
-    private fun <TAggregate : Aggregate> constructAggregate(clazz: KClass<TAggregate>, id: String) =
-        clazz.constructors
-            .single {
-                it.parameters.count() == 1 &&
-                    it.parameters.single().type == String::class.createType()
-            }
-            .call(id)
 }
