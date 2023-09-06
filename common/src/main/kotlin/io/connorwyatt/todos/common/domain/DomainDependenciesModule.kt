@@ -13,28 +13,32 @@ import io.connorwyatt.todos.common.domain.events.EventMap
 import io.connorwyatt.todos.common.domain.events.EventMapDefinition
 import io.connorwyatt.todos.common.domain.events.EventsRepository
 import io.connorwyatt.todos.common.domain.events.ResolvedEventMapper
-import io.connorwyatt.todos.common.domain.events.eventstore.EventStoreClientWrapper
-import io.connorwyatt.todos.common.domain.events.eventstore.EventStoreEventsRepository
+import io.connorwyatt.todos.common.domain.eventstore.EventStoreClientWrapper
+import io.connorwyatt.todos.common.domain.eventstore.EventStoreConfiguration
+import io.connorwyatt.todos.common.domain.eventstore.EventStoreEventsRepository
 import org.kodein.di.*
 
-val domainDependenciesModule by
-    DI.Module {
+fun domainDependenciesModule(eventStoreConfiguration: EventStoreConfiguration): DI.Module =
+    DI.Module(name = ::domainDependenciesModule.name) {
         bindSingletonOf(::AggregatesRepository)
         bindSingletonOf(::AggregateMap)
         bindSet<AggregateMapDefinition<Aggregate>>()
 
-        val settings =
-            EventStoreDBConnectionString.parseOrThrow(
-                // TODO: Move this to config.
-                "esdb://admin:changeit@localhost:2113?tls=false"
-            )
-
         bindProvider<EventsRepository> { new(::EventStoreEventsRepository) }
-        bindSingleton<EventStoreDBClient> { EventStoreDBClient.create(settings) }
+        bindSingleton<EventStoreDBClient> {
+            val settings =
+                EventStoreDBConnectionString.parseOrThrow(
+                    eventStoreConfiguration.connectionString
+                        ?: throw Exception("EventStore connectionString is not set.")
+                )
+
+            EventStoreDBClient.create(settings)
+        }
         bindProviderOf(::EventStoreClientWrapper)
+        bindProviderOf(::ResolvedEventMapper)
+
         bindSingletonOf(::EventMap)
         bindSet<EventMapDefinition>()
-        bindProviderOf(::ResolvedEventMapper)
 
         bindSet<EventHandler>()
         bindSingletonOf(::EventHandlerMap)

@@ -1,4 +1,4 @@
-package io.connorwyatt.todos.common.domain.events.eventstore
+package io.connorwyatt.todos.common.domain.eventstore
 
 import com.eventstore.dbclient.AppendToStreamOptions
 import com.eventstore.dbclient.EventDataBuilder

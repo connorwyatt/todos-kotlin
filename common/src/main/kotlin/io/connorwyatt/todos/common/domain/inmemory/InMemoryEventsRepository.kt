@@ -1,4 +1,4 @@
-package io.connorwyatt.todos.common.domain.events.inmemory
+package io.connorwyatt.todos.common.domain.inmemory
 
 import io.connorwyatt.todos.common.domain.events.Event
 import io.connorwyatt.todos.common.domain.events.EventEnvelope

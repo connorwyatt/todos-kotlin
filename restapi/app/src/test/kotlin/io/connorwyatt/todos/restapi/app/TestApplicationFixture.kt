@@ -1,5 +1,7 @@
 package io.connorwyatt.todos.restapi.app
 
+import com.sksamuel.hoplite.ConfigLoaderBuilder
+import com.sksamuel.hoplite.addResourceSource
 import io.connorwyatt.todos.common.time.TimeUtilities
 import io.connorwyatt.todos.common.time.clock.Clock
 import io.connorwyatt.todos.common.time.clock.testing.FakeClock
@@ -11,7 +13,7 @@ class TestApplicationFixture(val applicationTestBuilder: ApplicationTestBuilder,
 fun testApplicationFixture(block: suspend TestApplicationFixture.() -> Unit) {
     testApplicationFixture(
         DI {
-            extend(applicationDependenciesModule)
+            extend(applicationDependenciesModule(configuration))
             bind<Clock>(overrides = true) {
                 singleton { FakeClock(TimeUtilities.instantOf(2023, 1, 1, 12, 0, 0)) }
             }
@@ -28,3 +30,9 @@ fun testApplicationFixture(di: DI, block: suspend TestApplicationFixture.() -> U
         block(TestApplicationFixture(this, di))
     }
 }
+
+private val configuration =
+    ConfigLoaderBuilder.default()
+        .apply { addResourceSource("/configuration.test.json") }
+        .build()
+        .loadConfigOrThrow<Configuration>()

@@ -22,6 +22,8 @@ dependencies {
     implementation(project(":domain:events"))
     implementation(project(":restapi:models"))
 
+    implementation(libraries.hoplite.core)
+    implementation(libraries.hoplite.json)
     implementation(libraries.logback.classic)
     implementation(libraries.kodein.di)
     implementation(libraries.kodein.di.framework.ktor.server)
