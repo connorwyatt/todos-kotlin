@@ -3,8 +3,10 @@ package io.connorwyatt.todos.restapi.app
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
 import io.connorwyatt.todos.common.commonDependenciesModule
+import io.connorwyatt.todos.common.configureCommon
 import io.connorwyatt.todos.data.todosDataDependenciesModule
 import io.connorwyatt.todos.domain.todosDomainDependenciesModule
+import io.connorwyatt.todos.projector.todosProjectorDependenciesModule
 import io.connorwyatt.todos.restapi.app.mapping.TodoMapper
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -19,6 +21,7 @@ fun applicationDependenciesModule(configuration: Configuration) = DI {
     import(commonDependenciesModule(configuration.eventStore))
     import(todosDataDependenciesModule)
     import(todosDomainDependenciesModule)
+    import(todosProjectorDependenciesModule)
     bindProviderOf(::TodosService)
     bindProviderOf(::TodoMapper)
 }
@@ -34,6 +37,7 @@ fun main() {
 
 fun Application.module(diConfiguration: DI) {
     di { extend(diConfiguration) }
+    configureCommon()
     configureSerialization()
     configureRouting()
 }

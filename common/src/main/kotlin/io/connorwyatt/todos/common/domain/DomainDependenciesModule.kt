@@ -16,6 +16,7 @@ import io.connorwyatt.todos.common.domain.events.ResolvedEventMapper
 import io.connorwyatt.todos.common.domain.eventstore.EventStoreClientWrapper
 import io.connorwyatt.todos.common.domain.eventstore.EventStoreConfiguration
 import io.connorwyatt.todos.common.domain.eventstore.EventStoreEventsRepository
+import io.connorwyatt.todos.common.domain.eventstore.EventStoreSubscriptionsManager
 import org.kodein.di.*
 
 fun domainDependenciesModule(eventStoreConfiguration: EventStoreConfiguration): DI.Module =
@@ -35,6 +36,7 @@ fun domainDependenciesModule(eventStoreConfiguration: EventStoreConfiguration): 
             EventStoreDBClient.create(settings)
         }
         bindProviderOf(::EventStoreClientWrapper)
+        bindSingletonOf(::EventStoreSubscriptionsManager)
         bindProviderOf(::ResolvedEventMapper)
 
         bindSingletonOf(::EventMap)
