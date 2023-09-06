@@ -12,4 +12,10 @@ dependencies {
     implementation(libraries.ktor.client.cio)
     implementation(libraries.ktor.client.core)
     implementation(libraries.ktor.server.core)
+
+    testImplementation(testingLibraries.jUnit.jupiter)
+    testImplementation(testingLibraries.jUnit.jupiter.params)
+    testImplementation(testingLibraries.strikt.core)
+
+    testRuntimeOnly(testingLibraries.jUnit.jupiter.engine)
 }

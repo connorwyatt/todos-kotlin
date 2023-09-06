@@ -7,7 +7,7 @@ import io.connorwyatt.todos.restapi.models.Todo
 import io.connorwyatt.todos.restapi.models.TodoDefinition
 import io.ktor.http.*
 import java.time.Duration
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 import org.kodein.di.*
 import strikt.api.expectThat
 import strikt.assertions.*

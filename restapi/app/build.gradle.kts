@@ -37,7 +37,10 @@ dependencies {
 
     testImplementation(libraries.ktor.client.contentNegotiation)
     testImplementation(libraries.ktor.client.core)
-    testImplementation(testingLibraries.kotlin.test)
+    testImplementation(testingLibraries.jUnit.jupiter)
+    testImplementation(testingLibraries.jUnit.jupiter.params)
     testImplementation(testingLibraries.ktor.server.testHost)
     testImplementation(testingLibraries.strikt.core)
+
+    testRuntimeOnly(testingLibraries.jUnit.jupiter.engine)
 }

@@ -37,6 +37,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         val eventStoreClientVersion: String by settings
         val hopliteVersion: String by settings
+        val jUnitVersion: String by settings
         val logbackVersion: String by settings
         val kodeinVersion: String by settings
         val kotlinVersion: String by settings
@@ -71,7 +72,9 @@ dependencyResolutionManagement {
         }
 
         create("testingLibraries") {
-            library("kotlin-test", "org.jetbrains.kotlin", "kotlin-test").version(kotlinVersion)
+            library("jUnit-jupiter", "org.junit.jupiter", "junit-jupiter").version(jUnitVersion)
+            library("jUnit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").version(jUnitVersion)
+            library("jUnit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").version(jUnitVersion)
             library("ktor-server-testHost", "io.ktor", "ktor-server-test-host").version(ktorVersion)
             library("strikt.core", "io.strikt", "strikt-core").version(striktVersion)
         }

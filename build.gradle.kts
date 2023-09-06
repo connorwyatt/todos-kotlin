@@ -31,4 +31,8 @@ subprojects {
             ktfmt(project.properties["ktfmtVersion"] as String).kotlinlangStyle()
         }
     }
+
+    tasks.withType(Test::class) {
+        useJUnitPlatform()
+    }
 }

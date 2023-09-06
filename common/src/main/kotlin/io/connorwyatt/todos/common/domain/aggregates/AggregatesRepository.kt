@@ -1,6 +1,7 @@
 package io.connorwyatt.todos.common.domain.aggregates
 
 import io.connorwyatt.todos.common.domain.events.EventsRepository
+import io.connorwyatt.todos.common.domain.streams.StreamNameUtilities
 import kotlin.reflect.KClass
 
 class AggregatesRepository(
