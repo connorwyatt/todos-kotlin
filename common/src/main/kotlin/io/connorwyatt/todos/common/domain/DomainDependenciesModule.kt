@@ -17,6 +17,7 @@ import io.connorwyatt.todos.common.domain.eventstore.EventStoreClientWrapper
 import io.connorwyatt.todos.common.domain.eventstore.EventStoreConfiguration
 import io.connorwyatt.todos.common.domain.eventstore.EventStoreEventsRepository
 import io.connorwyatt.todos.common.domain.eventstore.EventStoreSubscriptionsManager
+import io.connorwyatt.todos.common.domain.inmemory.InMemoryEventsRepository
 import org.kodein.di.*
 
 fun domainDependenciesModule(eventStoreConfiguration: EventStoreConfiguration): DI.Module =
@@ -25,19 +26,23 @@ fun domainDependenciesModule(eventStoreConfiguration: EventStoreConfiguration): 
         bindSingletonOf(::AggregateMap)
         bindSet<AggregateMapDefinition<Aggregate>>()
 
-        bindProvider<EventsRepository> { new(::EventStoreEventsRepository) }
-        bindSingleton<EventStoreDBClient> {
-            val settings =
-                EventStoreDBConnectionString.parseOrThrow(
-                    eventStoreConfiguration.connectionString
-                        ?: throw Exception("EventStore connectionString is not set.")
-                )
+        if (!eventStoreConfiguration.useInMemoryEventStore) {
+            bindProvider<EventsRepository> { new(::EventStoreEventsRepository) }
+            bindSingleton<EventStoreDBClient> {
+                val settings =
+                    EventStoreDBConnectionString.parseOrThrow(
+                        eventStoreConfiguration.connectionString
+                            ?: throw Exception("EventStore connectionString is not set.")
+                    )
 
-            EventStoreDBClient.create(settings)
+                EventStoreDBClient.create(settings)
+            }
+            bindProviderOf(::EventStoreClientWrapper)
+            bindSingletonOf(::EventStoreSubscriptionsManager)
+            bindProviderOf(::ResolvedEventMapper)
+        } else {
+            bindSingleton<EventsRepository> { new(::InMemoryEventsRepository) }
         }
-        bindProviderOf(::EventStoreClientWrapper)
-        bindSingletonOf(::EventStoreSubscriptionsManager)
-        bindProviderOf(::ResolvedEventMapper)
 
         bindSingletonOf(::EventMap)
         bindSet<EventMapDefinition>()

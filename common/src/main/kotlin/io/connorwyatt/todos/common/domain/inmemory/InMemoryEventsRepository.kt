@@ -1,24 +1,27 @@
 package io.connorwyatt.todos.common.domain.inmemory
 
-import io.connorwyatt.todos.common.domain.events.Event
-import io.connorwyatt.todos.common.domain.events.EventEnvelope
-import io.connorwyatt.todos.common.domain.events.EventMetadata
-import io.connorwyatt.todos.common.domain.events.EventsRepository
+import io.connorwyatt.todos.common.domain.eventhandlers.EventHandler
+import io.connorwyatt.todos.common.domain.eventhandlers.EventHandlerMap
+import io.connorwyatt.todos.common.domain.events.*
 import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
 import io.connorwyatt.todos.common.time.clock.Clock
-import java.time.Instant
+import java.time.Duration
+import java.util.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.time.withTimeout
 
-class InMemoryEventsRepository(private val clock: Clock) : EventsRepository {
-    private var streams = emptyMap<StreamDescriptor, List<EventWithMetadata>>()
+class InMemoryEventsRepository(
+    private val clock: Clock,
+    private val eventMap: EventMap,
+    private val eventHandlerMap: EventHandlerMap,
+    private val eventHandlers: Set<EventHandler>,
+) : EventsRepository {
+    private var streams = emptyMap<StreamDescriptor, List<EventEnvelope<out Event>>>()
+    private val eventsToPropagate = LinkedList<Pair<StreamDescriptor, EventEnvelope<out Event>>>()
 
     override suspend fun readStream(
         streamDescriptor: StreamDescriptor
-    ): List<EventEnvelope<out Event>> {
-        return (streams[streamDescriptor] ?: emptyList()).map { (event, timestamp, streamPosition)
-            ->
-            EventEnvelope(event, EventMetadata(timestamp, streamPosition, streamPosition))
-        }
-    }
+    ): List<EventEnvelope<out Event>> = (streams[streamDescriptor] ?: emptyList())
 
     override suspend fun appendToStream(
         streamDescriptor: StreamDescriptor.Origin,
@@ -33,8 +36,7 @@ class InMemoryEventsRepository(private val clock: Clock) : EventsRepository {
                 throw Exception()
             }
 
-            val now = clock.now()
-            streams = streams.plus(streamDescriptor to wrapWithMetadata(events, now))
+            updateStreams(streamDescriptor, events)
 
             return
         }
@@ -44,33 +46,108 @@ class InMemoryEventsRepository(private val clock: Clock) : EventsRepository {
             throw Exception()
         }
 
-        val now = clock.now()
-        val lastStreamPosition = stream.last().streamPosition
-
-        streams =
-            streams.mapValues {
-                if (it.key == streamDescriptor)
-                    it.value.plus(wrapWithMetadata(events, now, lastStreamPosition))
-                else it.value
-            }
+        updateStreams(streamDescriptor, events)
     }
 
-    private fun wrapWithMetadata(
-        events: List<Event>,
-        timestamp: Instant,
-        lastStreamPosition: Long = -1
-    ): List<EventWithMetadata> {
-        val nextStreamPosition = lastStreamPosition + 1
+    suspend fun startEventPropagation() {
+        while (true) {
+            if (eventsToPropagate.isNotEmpty()) {
+                val (streamDescriptor, envelope) = eventsToPropagate.pollFirst()
 
-        return events.mapIndexed { index, event ->
-            val streamPosition = nextStreamPosition + index
-            EventWithMetadata(event, timestamp, streamPosition)
+                propagateEventToHandlers(streamDescriptor, envelope)
+            }
+
+            delay(20)
         }
     }
 
-    private data class EventWithMetadata(
-        val event: Event,
-        val timestamp: Instant,
-        val streamPosition: Long
-    )
+    suspend fun waitForEmptyEventPropagationQueue(timeout: Duration) {
+        withTimeout(timeout) {
+            while (eventsToPropagate.isNotEmpty()) {
+                delay(50)
+            }
+        }
+    }
+
+    @Synchronized
+    private fun updateStreams(
+        originStreamDescriptor: StreamDescriptor.Origin,
+        events: List<Event>
+    ) {
+        val now = clock.now()
+
+        val envelopes =
+            events.flatMap { event ->
+                val versionedEventType = eventMap.versionedEventType(event)
+
+                val nextStreamPositionForOriginStream = nextStreamPosition(originStreamDescriptor)
+
+                val categoryStreamDescriptor =
+                    StreamDescriptor.Category(originStreamDescriptor.category)
+                val eventTypeStreamDescriptor = StreamDescriptor.EventType(versionedEventType)
+                val allStreamDescriptor = StreamDescriptor.All
+
+                listOf(
+                        originStreamDescriptor,
+                        categoryStreamDescriptor,
+                        eventTypeStreamDescriptor,
+                        allStreamDescriptor
+                    )
+                    .map {
+                        val envelope =
+                            EventEnvelope(
+                                event,
+                                EventMetadata(
+                                    now,
+                                    nextStreamPositionForOriginStream,
+                                    nextStreamPosition(it)
+                                )
+                            )
+
+                        updateStream(it, envelope)
+
+                        it to envelope
+                    }
+            }
+
+        enqueueEventsForPropagation(envelopes)
+    }
+
+    private fun updateStream(
+        streamDescriptor: StreamDescriptor,
+        envelope: EventEnvelope<out Event>
+    ) {
+        val stream = streams[streamDescriptor]
+
+        streams =
+            if (stream == null) {
+                streams.plus(streamDescriptor to listOf(envelope))
+            } else {
+                streams.mapValues {
+                    if (it.key != streamDescriptor) it.value else it.value.plus(envelope)
+                }
+            }
+    }
+
+    private fun nextStreamPosition(streamDescriptor: StreamDescriptor): Long {
+        val lastStreamPositionInOriginStream =
+            streams[streamDescriptor]?.lastOrNull()?.metadata?.streamPosition ?: -1
+        return lastStreamPositionInOriginStream + 1
+    }
+
+    private fun enqueueEventsForPropagation(
+        envelopes: List<Pair<StreamDescriptor, EventEnvelope<Event>>>
+    ) {
+        eventsToPropagate.addAll(envelopes)
+    }
+
+    private suspend fun propagateEventToHandlers(
+        streamDescriptor: StreamDescriptor,
+        envelope: EventEnvelope<out Event>,
+    ) {
+        eventHandlerMap
+            .eventHandlersFor(streamDescriptor)
+            .map { eventHandlerClazz -> eventHandlers.single { it::class == eventHandlerClazz } }
+            .forEach { it.handleEvent(streamDescriptor, envelope.event, envelope.metadata) }
+    }
 }

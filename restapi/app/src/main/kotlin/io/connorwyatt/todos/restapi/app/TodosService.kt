@@ -1,35 +1,41 @@
 package io.connorwyatt.todos.restapi.app
 
-import io.connorwyatt.todos.common.time.clock.Clock
+import io.connorwyatt.todos.common.domain.aggregates.AggregatesRepository
 import io.connorwyatt.todos.data.TodosRepository
-import io.connorwyatt.todos.data.models.Todo as DataTodo
+import io.connorwyatt.todos.domain.Todo as TodoAggregate
 import io.connorwyatt.todos.restapi.app.mapping.TodoMapper
 import io.connorwyatt.todos.restapi.models.Todo
 import io.connorwyatt.todos.restapi.models.TodoDefinition
 import java.util.*
 
 class TodosService(
-    private val repository: TodosRepository,
-    private val clock: Clock,
+    private val aggregatesRepository: AggregatesRepository,
+    private val todosRepository: TodosRepository,
     private val mapper: TodoMapper
 ) {
     suspend fun retrieveTodos(): List<Todo> =
-        repository.searchTodos().map(mapper::fromDataModelToRestApiModel)
+        todosRepository.searchTodos().map(mapper::fromDataModelToRestApiModel)
 
     suspend fun retrieveTodo(todoId: String): Todo? =
-        repository.getTodo(todoId)?.let(mapper::fromDataModelToRestApiModel)
+        todosRepository.getTodo(todoId)?.let(mapper::fromDataModelToRestApiModel)
 
     suspend fun addTodo(definition: TodoDefinition): String {
-        val id = UUID.randomUUID().toString()
+        val todoId = UUID.randomUUID().toString()
 
-        repository.insertTodo(DataTodo(id, definition.title, clock.now(), false, null, 0))
+        val aggregate = aggregatesRepository.load<TodoAggregate>(todoId)
 
-        return id
+        aggregate.addTodo(definition.title)
+
+        aggregatesRepository.save(aggregate)
+
+        return todoId
     }
 
     suspend fun completeTodo(todoId: String) {
-        val todo = repository.getTodo(todoId) ?: throw Exception("Todo does not exist.")
+        val aggregate = aggregatesRepository.load<TodoAggregate>(todoId)
 
-        repository.updateTodo(todo.copy(isComplete = true, completedAt = clock.now()))
+        aggregate.completeTodo()
+
+        aggregatesRepository.save(aggregate)
     }
 }

@@ -31,14 +31,14 @@ fun main() {
     val configuration = buildConfiguration()
 
     embeddedServer(Netty, port = 8080, host = "localhost") {
-            module(DI { import(applicationDependenciesModule(configuration)) })
+            module(configuration, DI { import(applicationDependenciesModule(configuration)) })
         }
         .start(wait = true)
 }
 
-fun Application.module(diConfiguration: DI) {
+fun Application.module(configuration: Configuration, diConfiguration: DI) {
     di { extend(diConfiguration) }
-    configureCommon()
+    configureCommon(configuration.eventStore)
     configureSerialization()
     configureRouting()
 }

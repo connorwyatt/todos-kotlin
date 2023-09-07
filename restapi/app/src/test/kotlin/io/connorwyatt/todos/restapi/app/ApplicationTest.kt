@@ -7,6 +7,7 @@ import io.connorwyatt.todos.restapi.models.Todo
 import io.connorwyatt.todos.restapi.models.TodoDefinition
 import io.ktor.http.*
 import java.time.Duration
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.kodein.di.*
 import strikt.api.expectThat
@@ -14,38 +15,48 @@ import strikt.assertions.*
 
 class ApplicationTest {
     @Test
-    fun `when a todo is added, then it can be retrieved`() = testApplicationFixture {
-        val client = applicationTestBuilder.createJsonClient()
-        val todosClient = HttpTodosClient(client)
+    fun `when a todo is added, then it can be retrieved`() = runBlocking {
+        testApplicationFixture {
+            val client = applicationTestBuilder.createJsonClient()
+            val todosClient = HttpTodosClient(client)
 
-        val clock by di.instance<Clock>()
+            val clock by di.instance<Clock>()
 
-        val todoId = addTodo(todosClient, TodoDefinition("Clean my room"))
+            val todoId = addTodo(todosClient, TodoDefinition("Clean my room"))
 
-        retrieveTodo(todosClient, todoId).also {
-            expectThat(it).isEqualTo(Todo(todoId, "Clean my room", clock.now(), false, null))
+            waitForConsistency()
+
+            retrieveTodo(todosClient, todoId).also {
+                expectThat(it).isEqualTo(Todo(todoId, "Clean my room", clock.now(), false, null))
+            }
         }
     }
 
     @Test
-    fun `when a todo is completed, then it is marked as completed`() = testApplicationFixture {
-        val client = applicationTestBuilder.createJsonClient()
-        val todosClient = HttpTodosClient(client)
+    fun `when a todo is completed, then it is marked as completed`() = runBlocking {
+        testApplicationFixture {
+            val client = applicationTestBuilder.createJsonClient()
+            val todosClient = HttpTodosClient(client)
 
-        val clock by di.instance<Clock>()
-        val fakeClock = clock as FakeClock
+            val clock by di.instance<Clock>()
+            val fakeClock = clock as FakeClock
 
-        val initialInstant = clock.now()
+            val initialInstant = clock.now()
 
-        val todoId = addTodo(todosClient, TodoDefinition("Clean my room"))
+            val todoId = addTodo(todosClient, TodoDefinition("Clean my room"))
 
-        fakeClock.advanceBy(Duration.ofMinutes(10))
+            waitForConsistency()
 
-        completeTodo(todosClient, todoId)
+            fakeClock.advanceBy(Duration.ofMinutes(10))
 
-        retrieveTodo(todosClient, todoId).also {
-            expectThat(it)
-                .isEqualTo(Todo(todoId, "Clean my room", initialInstant, true, clock.now()))
+            completeTodo(todosClient, todoId)
+
+            waitForConsistency()
+
+            retrieveTodo(todosClient, todoId).also {
+                expectThat(it)
+                    .isEqualTo(Todo(todoId, "Clean my room", initialInstant, true, clock.now()))
+            }
         }
     }
 

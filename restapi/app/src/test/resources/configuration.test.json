@@ -1,5 +1,5 @@
 {
   "eventStore": {
-    "connectionString": "esdb://admin:changeit@localhost:2113?tls=false"
+    "useInMemoryEventStore": true
   }
 }

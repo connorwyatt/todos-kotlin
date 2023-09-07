@@ -1,5 +1,6 @@
 {
   "eventStore": {
-    "connectionString": null
+    "connectionString": null,
+    "useInMemoryEventStore": false
   }
 }
