@@ -14,30 +14,32 @@ class EventStoreSubscriptionsManager(
     private val resolvedEventMapper: ResolvedEventMapper
 ) {
     private var jobs = emptyList<Job>()
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-    suspend fun start() {
-        jobs =
-            jobs.plus(
-                eventHandlers.flatMap { eventHandler ->
-                    val streamDescriptors =
-                        eventHandlerMap.streamDescriptorsFor(eventHandler::class)
+    fun start() =
+        coroutineScope.launch {
+            jobs =
+                jobs.plus(
+                    eventHandlers.flatMap { eventHandler ->
+                        val streamDescriptors =
+                            eventHandlerMap.streamDescriptorsFor(eventHandler::class)
 
-                    streamDescriptors.map { streamDescriptor ->
-                        val subscribeToStreamOptions =
-                            SubscribeToStreamOptions.get().resolveLinkTos(true).apply {
-                                eventHandler.streamPosition(streamDescriptor)?.let {
-                                    fromRevision(it)
+                        streamDescriptors.map { streamDescriptor ->
+                            val subscribeToStreamOptions =
+                                SubscribeToStreamOptions.get().resolveLinkTos(true).apply {
+                                    eventHandler.streamPosition(streamDescriptor)?.let {
+                                        fromRevision(it)
+                                    }
+                                        ?: fromStart()
                                 }
-                                    ?: fromStart()
-                            }
 
-                        CoroutineScope(Dispatchers.IO).launch {
-                            subscribe(streamDescriptor, eventHandler, subscribeToStreamOptions)
+                            launch {
+                                subscribe(streamDescriptor, eventHandler, subscribeToStreamOptions)
+                            }
                         }
                     }
-                }
-            )
-    }
+                )
+        }
 
     private fun subscribe(
         streamDescriptor: StreamDescriptor,

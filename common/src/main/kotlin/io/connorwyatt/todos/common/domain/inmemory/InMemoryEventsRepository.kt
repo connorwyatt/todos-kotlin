@@ -6,8 +6,9 @@ import io.connorwyatt.todos.common.domain.events.*
 import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
 import io.connorwyatt.todos.common.time.clock.Clock
 import java.time.Duration
-import java.util.*
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.time.withTimeout
 
 class InMemoryEventsRepository(
@@ -17,7 +18,10 @@ class InMemoryEventsRepository(
     private val eventHandlers: Set<EventHandler>,
 ) : EventsRepository {
     private var streams = emptyMap<StreamDescriptor, List<EventEnvelope<out Event>>>()
-    private val eventsToPropagate = LinkedList<Pair<StreamDescriptor, EventEnvelope<out Event>>>()
+    private val streamUpdateMutex = Mutex()
+    private val eventPropagationCoroutineScope = CoroutineScope(Dispatchers.Default)
+    private val eventPropagationChannel =
+        Channel<Pair<StreamDescriptor, EventEnvelope<out Event>>>()
 
     override suspend fun readStream(
         streamDescriptor: StreamDescriptor
@@ -49,68 +53,71 @@ class InMemoryEventsRepository(
         updateStreams(streamDescriptor, events)
     }
 
-    suspend fun startEventPropagation() {
-        while (true) {
-            if (eventsToPropagate.isNotEmpty()) {
-                val (streamDescriptor, envelope) = eventsToPropagate.pollFirst()
-
+    fun startEventPropagation() {
+        eventPropagationCoroutineScope.launch {
+            for ((streamDescriptor, envelope) in eventPropagationChannel) {
                 propagateEventToHandlers(streamDescriptor, envelope)
             }
-
-            delay(20)
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun waitForEmptyEventPropagationQueue(timeout: Duration) {
         withTimeout(timeout) {
-            while (eventsToPropagate.isNotEmpty()) {
-                delay(50)
+            while (!eventPropagationChannel.isEmpty) {
+                continue
             }
         }
     }
 
-    @Synchronized
-    private fun updateStreams(
+    private suspend fun updateStreams(
         originStreamDescriptor: StreamDescriptor.Origin,
         events: List<Event>
     ) {
         val now = clock.now()
 
-        val envelopes =
-            events.flatMap { event ->
-                val versionedEventType = eventMap.versionedEventType(event)
+        try {
+            streamUpdateMutex.lock()
 
-                val nextStreamPositionForOriginStream = nextStreamPosition(originStreamDescriptor)
+            val envelopes =
+                events.flatMap { event ->
+                    val versionedEventType = eventMap.versionedEventType(event)
 
-                val categoryStreamDescriptor =
-                    StreamDescriptor.Category(originStreamDescriptor.category)
-                val eventTypeStreamDescriptor = StreamDescriptor.EventType(versionedEventType)
-                val allStreamDescriptor = StreamDescriptor.All
+                    val nextStreamPositionForOriginStream =
+                        nextStreamPosition(originStreamDescriptor)
 
-                listOf(
-                        originStreamDescriptor,
-                        categoryStreamDescriptor,
-                        eventTypeStreamDescriptor,
-                        allStreamDescriptor
-                    )
-                    .map {
-                        val envelope =
-                            EventEnvelope(
-                                event,
-                                EventMetadata(
-                                    now,
-                                    nextStreamPositionForOriginStream,
-                                    nextStreamPosition(it)
+                    val categoryStreamDescriptor =
+                        StreamDescriptor.Category(originStreamDescriptor.category)
+                    val eventTypeStreamDescriptor = StreamDescriptor.EventType(versionedEventType)
+                    val allStreamDescriptor = StreamDescriptor.All
+
+                    listOf(
+                            originStreamDescriptor,
+                            categoryStreamDescriptor,
+                            eventTypeStreamDescriptor,
+                            allStreamDescriptor
+                        )
+                        .map {
+                            val envelope =
+                                EventEnvelope(
+                                    event,
+                                    EventMetadata(
+                                        now,
+                                        nextStreamPositionForOriginStream,
+                                        nextStreamPosition(it)
+                                    )
                                 )
-                            )
 
-                        updateStream(it, envelope)
+                            updateStream(it, envelope)
 
-                        it to envelope
-                    }
-            }
+                            it to envelope
+                        }
+                }
 
-        enqueueEventsForPropagation(envelopes)
+            eventPropagationCoroutineScope.launch { enqueueEventsForPropagation(envelopes) }
+        } finally {
+            streamUpdateMutex.unlock()
+        }
     }
 
     private fun updateStream(
@@ -135,19 +142,28 @@ class InMemoryEventsRepository(
         return lastStreamPositionInOriginStream + 1
     }
 
-    private fun enqueueEventsForPropagation(
+    private suspend fun enqueueEventsForPropagation(
         envelopes: List<Pair<StreamDescriptor, EventEnvelope<Event>>>
     ) {
-        eventsToPropagate.addAll(envelopes)
+        envelopes.forEach { eventPropagationChannel.send(it) }
     }
 
     private suspend fun propagateEventToHandlers(
         streamDescriptor: StreamDescriptor,
         envelope: EventEnvelope<out Event>,
     ) {
-        eventHandlerMap
-            .eventHandlersFor(streamDescriptor)
-            .map { eventHandlerClazz -> eventHandlers.single { it::class == eventHandlerClazz } }
-            .forEach { it.handleEvent(streamDescriptor, envelope.event, envelope.metadata) }
+        val jobs =
+            eventHandlerMap
+                .eventHandlersFor(streamDescriptor)
+                .map { eventHandlerClazz ->
+                    eventHandlers.single { it::class == eventHandlerClazz }
+                }
+                .map {
+                    eventPropagationCoroutineScope.launch {
+                        it.handleEvent(streamDescriptor, envelope.event, envelope.metadata)
+                    }
+                }
+
+        jobs.joinAll()
     }
 }
