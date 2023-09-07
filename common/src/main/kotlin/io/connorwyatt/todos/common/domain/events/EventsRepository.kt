@@ -1,10 +1,12 @@
 package io.connorwyatt.todos.common.domain.events
 
+import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
+
 interface EventsRepository {
-    suspend fun readStream(streamName: String): List<EventEnvelope<out Event>>
+    suspend fun readStream(streamDescriptor: StreamDescriptor): List<EventEnvelope<out Event>>
 
     suspend fun appendToStream(
-        streamId: String,
+        streamDescriptor: StreamDescriptor.Origin,
         events: List<Event>,
         expectedStreamVersion: Long?,
     )

@@ -1,16 +1,19 @@
 package io.connorwyatt.todos.common.domain.eventstore
 
 import com.eventstore.dbclient.*
+import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
 import kotlinx.coroutines.future.await
 
 class EventStoreClientWrapper(private val eventStoreDBClient: EventStoreDBClient) {
     suspend fun readStream(
-        streamName: String,
+        streamDescriptor: StreamDescriptor,
         readStreamOptions: ReadStreamOptions,
     ): ReadResult {
         val readResult =
             try {
-                eventStoreDBClient.readStream(streamName, readStreamOptions).await()
+                eventStoreDBClient
+                    .readStream(streamDescriptor.streamName, readStreamOptions)
+                    .await()
             } catch (exception: Exception) {
                 return ReadResult.Failure(exception)
             }
@@ -19,14 +22,14 @@ class EventStoreClientWrapper(private val eventStoreDBClient: EventStoreDBClient
     }
 
     suspend fun appendToStream(
-        streamName: String,
+        streamDescriptor: StreamDescriptor,
         options: AppendToStreamOptions,
         events: List<EventData>,
     ): WriteResult {
         val writeResult =
             try {
                 eventStoreDBClient
-                    .appendToStream(streamName, options, *events.toTypedArray())
+                    .appendToStream(streamDescriptor.streamName, options, *events.toTypedArray())
                     .await()
             } catch (exception: Exception) {
                 return WriteResult.Failure(exception)
@@ -36,7 +39,7 @@ class EventStoreClientWrapper(private val eventStoreDBClient: EventStoreDBClient
     }
 
     fun subscribeToStream(
-        streamName: String,
+        streamDescriptor: StreamDescriptor,
         onEvent: ((Subscription, ResolvedEvent) -> Unit)? = null,
         onError: ((Subscription, Throwable) -> Unit)? = null,
         onCancelled: ((Subscription) -> Unit)? = null,
@@ -44,7 +47,7 @@ class EventStoreClientWrapper(private val eventStoreDBClient: EventStoreDBClient
         subscribeToStreamOptions: SubscribeToStreamOptions? = null
     ) {
         eventStoreDBClient.subscribeToStream(
-            streamName,
+            streamDescriptor.streamName,
             object : SubscriptionListener() {
                 override fun onEvent(subscription: Subscription, event: ResolvedEvent) {
                     onEvent?.invoke(subscription, event)

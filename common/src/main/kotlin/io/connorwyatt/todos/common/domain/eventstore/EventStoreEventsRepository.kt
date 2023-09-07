@@ -5,14 +5,17 @@ import com.eventstore.dbclient.EventDataBuilder
 import com.eventstore.dbclient.ExpectedRevision
 import com.eventstore.dbclient.ReadStreamOptions
 import io.connorwyatt.todos.common.domain.events.*
+import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
 
 class EventStoreEventsRepository(
     private val eventStoreClient: EventStoreClientWrapper,
     private val eventMap: EventMap,
     private val resolvedEventMapper: ResolvedEventMapper
 ) : EventsRepository {
-    override suspend fun readStream(streamName: String): List<EventEnvelope<out Event>> {
-        val result = eventStoreClient.readStream(streamName, readStreamOptions)
+    override suspend fun readStream(
+        streamDescriptor: StreamDescriptor
+    ): List<EventEnvelope<out Event>> {
+        val result = eventStoreClient.readStream(streamDescriptor, readStreamOptions)
 
         return when (result) {
             is EventStoreClientWrapper.ReadResult.Failure -> emptyList()
@@ -22,7 +25,7 @@ class EventStoreEventsRepository(
     }
 
     override suspend fun appendToStream(
-        streamId: String,
+        streamDescriptor: StreamDescriptor.Origin,
         events: List<Event>,
         expectedStreamVersion: Long?,
     ) {
@@ -42,7 +45,7 @@ class EventStoreEventsRepository(
             expectedStreamVersion?.let { appendToStreamOptions(it) }
                 ?: appendToStreamOptionsNoStream
 
-        val result = eventStoreClient.appendToStream(streamId, options, eventDataList)
+        val result = eventStoreClient.appendToStream(streamDescriptor, options, eventDataList)
 
         if (result is EventStoreClientWrapper.WriteResult.Failure) throw result.exception
     }

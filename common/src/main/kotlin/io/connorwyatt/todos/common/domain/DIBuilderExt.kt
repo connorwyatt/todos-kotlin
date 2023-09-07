@@ -7,6 +7,7 @@ import io.connorwyatt.todos.common.domain.eventhandlers.EventHandlerDefinition
 import io.connorwyatt.todos.common.domain.events.Event
 import io.connorwyatt.todos.common.domain.events.EventMapDefinition
 import io.connorwyatt.todos.common.domain.events.VersionedEventType
+import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
 import org.kodein.di.*
 import org.kodein.di.bindings.*
 
@@ -28,13 +29,13 @@ inline fun <reified TEvent : Event> DI.Builder.bindEventDefinition(
 }
 
 inline fun <reified TEventHandler : EventHandler> DI.Builder.bindEventHandler(
-    streamNames: Set<String>,
+    streamDescriptors: Set<StreamDescriptor>,
     noinline constructor: NoArgBindingDI<*>.() -> TEventHandler,
 ) {
     inBindSet<EventHandler> { add { singleton { constructor() } } }
     inBindSet<EventHandlerDefinition> {
-        streamNames.forEach { streamName ->
-            add { singleton { EventHandlerDefinition(streamName, TEventHandler::class) } }
+        streamDescriptors.forEach { streamDescriptor ->
+            add { singleton { EventHandlerDefinition(streamDescriptor, TEventHandler::class) } }
         }
     }
 }

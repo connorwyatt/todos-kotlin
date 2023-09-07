@@ -4,6 +4,7 @@ import com.eventstore.dbclient.SubscribeToStreamOptions
 import io.connorwyatt.todos.common.domain.eventhandlers.EventHandler
 import io.connorwyatt.todos.common.domain.eventhandlers.EventHandlerMap
 import io.connorwyatt.todos.common.domain.events.ResolvedEventMapper
+import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
 import kotlinx.coroutines.*
 
 class EventStoreSubscriptionsManager(
@@ -18,17 +19,20 @@ class EventStoreSubscriptionsManager(
         jobs =
             jobs.plus(
                 eventHandlers.flatMap { eventHandler ->
-                    val streamNames = eventHandlerMap.streamNamesFor(eventHandler::class)
+                    val streamDescriptors =
+                        eventHandlerMap.streamDescriptorsFor(eventHandler::class)
 
-                    streamNames.map { streamName ->
+                    streamDescriptors.map { streamDescriptor ->
                         val subscribeToStreamOptions =
                             SubscribeToStreamOptions.get().resolveLinkTos(true).apply {
-                                eventHandler.streamPosition(streamName)?.let { fromRevision(it) }
+                                eventHandler.streamPosition(streamDescriptor)?.let {
+                                    fromRevision(it)
+                                }
                                     ?: fromStart()
                             }
 
                         CoroutineScope(Dispatchers.IO).launch {
-                            subscribe(streamName, eventHandler, subscribeToStreamOptions)
+                            subscribe(streamDescriptor, eventHandler, subscribeToStreamOptions)
                         }
                     }
                 }
@@ -36,17 +40,17 @@ class EventStoreSubscriptionsManager(
     }
 
     private fun subscribe(
-        streamName: String,
+        streamDescriptor: StreamDescriptor,
         eventHandler: EventHandler,
         subscribeToStreamOptions: SubscribeToStreamOptions,
     ) {
         eventStoreClientWrapper.subscribeToStream(
-            streamName,
+            streamDescriptor,
             { _, resolvedEvent ->
                 val eventEnvelope = resolvedEventMapper.map(resolvedEvent)
                 runBlocking(Dispatchers.IO) {
                     eventHandler.handleEvent(
-                        streamName,
+                        streamDescriptor,
                         eventEnvelope.event,
                         eventEnvelope.metadata
                     )

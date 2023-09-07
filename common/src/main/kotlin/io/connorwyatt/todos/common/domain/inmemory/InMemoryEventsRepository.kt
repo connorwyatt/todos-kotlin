@@ -4,24 +4,28 @@ import io.connorwyatt.todos.common.domain.events.Event
 import io.connorwyatt.todos.common.domain.events.EventEnvelope
 import io.connorwyatt.todos.common.domain.events.EventMetadata
 import io.connorwyatt.todos.common.domain.events.EventsRepository
+import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
 import io.connorwyatt.todos.common.time.clock.Clock
 import java.time.Instant
 
 class InMemoryEventsRepository(private val clock: Clock) : EventsRepository {
-    private var streams = emptyMap<String, List<EventWithMetadata>>()
+    private var streams = emptyMap<StreamDescriptor, List<EventWithMetadata>>()
 
-    override suspend fun readStream(streamName: String): List<EventEnvelope<out Event>> {
-        return (streams[streamName] ?: emptyList()).map { (event, timestamp, streamPosition) ->
+    override suspend fun readStream(
+        streamDescriptor: StreamDescriptor
+    ): List<EventEnvelope<out Event>> {
+        return (streams[streamDescriptor] ?: emptyList()).map { (event, timestamp, streamPosition)
+            ->
             EventEnvelope(event, EventMetadata(timestamp, streamPosition, streamPosition))
         }
     }
 
     override suspend fun appendToStream(
-        streamId: String,
+        streamDescriptor: StreamDescriptor.Origin,
         events: List<Event>,
         expectedStreamVersion: Long?,
     ) {
-        val stream = streams[streamId]
+        val stream = streams[streamDescriptor]
 
         if (expectedStreamVersion == null) {
             if (!stream.isNullOrEmpty()) {
@@ -30,7 +34,7 @@ class InMemoryEventsRepository(private val clock: Clock) : EventsRepository {
             }
 
             val now = clock.now()
-            streams = streams.plus(streamId to wrapWithMetadata(events, now))
+            streams = streams.plus(streamDescriptor to wrapWithMetadata(events, now))
 
             return
         }
@@ -45,7 +49,7 @@ class InMemoryEventsRepository(private val clock: Clock) : EventsRepository {
 
         streams =
             streams.mapValues {
-                if (it.key == streamId)
+                if (it.key == streamDescriptor)
                     it.value.plus(wrapWithMetadata(events, now, lastStreamPosition))
                 else it.value
             }

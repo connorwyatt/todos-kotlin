@@ -1,7 +1,7 @@
 package io.connorwyatt.todos.common.domain.aggregates
 
 import io.connorwyatt.todos.common.domain.events.EventsRepository
-import io.connorwyatt.todos.common.domain.streams.StreamNameUtilities
+import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
 import kotlin.reflect.KClass
 
 class AggregatesRepository(
@@ -10,19 +10,19 @@ class AggregatesRepository(
 ) {
     suspend fun <TAggregate : Aggregate> load(clazz: KClass<TAggregate>, id: String): TAggregate {
         val (category, _, constructor) = aggregateMap.definitionFor(clazz)
-        val streamName = StreamNameUtilities.streamName(category, id)
+        val streamDescriptor = StreamDescriptor.Origin(category, id)
 
         val aggregate = constructor.invoke(id)
 
-        val events = eventsRepository.readStream(streamName)
+        val events = eventsRepository.readStream(streamDescriptor)
 
         aggregate.applyEvents(events)
 
         return aggregate
     }
 
-    suspend inline fun <reified TAggregate : Aggregate> load(streamName: String): TAggregate {
-        return load(TAggregate::class, streamName)
+    suspend inline fun <reified TAggregate : Aggregate> load(id: String): TAggregate {
+        return load(TAggregate::class, id)
     }
 
     suspend fun <TAggregate : Aggregate> save(aggregate: TAggregate) {
@@ -32,10 +32,10 @@ class AggregatesRepository(
 
         val (category) = aggregateMap.definitionFor(aggregate::class)
 
-        val streamName = StreamNameUtilities.streamName(category, aggregate.id)
+        val streamDescriptor = StreamDescriptor.Origin(category, aggregate.id)
 
         eventsRepository.appendToStream(
-            streamName,
+            streamDescriptor,
             aggregate.unsavedEvents,
             aggregate.latestSavedEventVersion()
         )
