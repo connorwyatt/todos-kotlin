@@ -13,7 +13,7 @@ class TestApplicationFixture(val applicationTestBuilder: ApplicationTestBuilder,
 fun testApplicationFixture(block: suspend TestApplicationFixture.() -> Unit) {
     testApplicationFixture(
         DI {
-            extend(applicationDependenciesModule(configuration))
+            import(applicationDependenciesModule(configuration))
             bind<Clock>(overrides = true) {
                 singleton { FakeClock(TimeUtilities.instantOf(2023, 1, 1, 12, 0, 0)) }
             }

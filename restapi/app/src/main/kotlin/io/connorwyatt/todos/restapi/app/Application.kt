@@ -17,20 +17,21 @@ import io.ktor.server.routing.*
 import org.kodein.di.*
 import org.kodein.di.ktor.*
 
-fun applicationDependenciesModule(configuration: Configuration) = DI {
-    import(commonDependenciesModule(configuration.eventStore))
-    import(todosDataDependenciesModule)
-    import(todosDomainDependenciesModule)
-    import(todosProjectorDependenciesModule)
-    bindProviderOf(::TodosService)
-    bindProviderOf(::TodoMapper)
-}
+fun applicationDependenciesModule(configuration: Configuration): DI.Module =
+    DI.Module(name = ::applicationDependenciesModule.name) {
+        import(commonDependenciesModule(configuration.eventStore))
+        import(todosDataDependenciesModule)
+        import(todosDomainDependenciesModule)
+        import(todosProjectorDependenciesModule)
+        bindProviderOf(::TodosService)
+        bindProviderOf(::TodoMapper)
+    }
 
 fun main() {
     val configuration = buildConfiguration()
 
     embeddedServer(Netty, port = 8080, host = "localhost") {
-            module(applicationDependenciesModule(configuration))
+            module(DI { import(applicationDependenciesModule(configuration)) })
         }
         .start(wait = true)
 }
