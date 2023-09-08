@@ -160,6 +160,7 @@ class InMemoryEventsRepository(
                 }
                 .map {
                     eventPropagationCoroutineScope.launch {
+                        // TODO: Error handling.
                         it.handleEvent(streamDescriptor, envelope.event, envelope.metadata)
                     }
                 }
