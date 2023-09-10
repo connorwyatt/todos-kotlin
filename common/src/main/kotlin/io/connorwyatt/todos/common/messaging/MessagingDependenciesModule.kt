@@ -6,6 +6,7 @@ import io.connorwyatt.todos.common.messaging.commands.CommandMapDefinition
 import io.connorwyatt.todos.common.messaging.commands.bus.CommandBus
 import io.connorwyatt.todos.common.messaging.commands.bus.NoopCommandBus
 import io.connorwyatt.todos.common.messaging.commands.bus.RabbitMQCommandBus
+import io.connorwyatt.todos.common.messaging.commands.commandhandlers.RabbitMQSubscriptionsManager
 import io.connorwyatt.todos.common.messaging.commands.queues.*
 import org.kodein.di.*
 
@@ -29,6 +30,14 @@ fun messagingDependenciesModule(rabbitMQConfiguration: RabbitMQConfiguration): D
 
             bindProvider<CommandBus> {
                 RabbitMQCommandBus(instance(), exchangeName, instance(), instance())
+            }
+
+            bindSingleton {
+                RabbitMQSubscriptionsManager(
+                    rabbitMQConfiguration.exchangeName,
+                    instance(),
+                    instance()
+                )
             }
         } else {
             bindProvider<CommandQueueCreator> { new(::NoopCommandQueueCreator) }
