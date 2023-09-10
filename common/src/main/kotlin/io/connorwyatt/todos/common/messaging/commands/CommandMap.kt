@@ -12,7 +12,7 @@ class CommandMap(private val definitions: Set<CommandMapDefinition>) {
             ?: throw Exception("Could not find Command type for class (${clazz.simpleName}).")
 
     internal fun classFor(type: String) =
-        definitions.singleOrNull { it.type == type }?.type
+        definitions.singleOrNull { it.type == type }?.clazz
             ?: throw Exception("Could not find Command class for type ($type).")
 
     private fun checkForDuplicates() {

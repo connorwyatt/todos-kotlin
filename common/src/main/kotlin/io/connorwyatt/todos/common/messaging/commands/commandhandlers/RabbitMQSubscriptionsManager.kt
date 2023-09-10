@@ -1,23 +1,27 @@
 package io.connorwyatt.todos.common.messaging.commands.commandhandlers
 
-import com.rabbitmq.client.CancelCallback
-import com.rabbitmq.client.Channel
-import com.rabbitmq.client.Connection
-import com.rabbitmq.client.DeliverCallback
+import com.rabbitmq.client.*
+import io.connorwyatt.todos.common.messaging.commands.Command
+import io.connorwyatt.todos.common.messaging.commands.CommandMap
 import io.connorwyatt.todos.common.messaging.commands.queues.CommandQueueList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
-class RabbitMQSubscriptionsManager(
+internal class RabbitMQSubscriptionsManager(
     private val exchangeName: String,
     private val connection: Connection,
-    private val commandQueueList: CommandQueueList
+    private val commandQueueList: CommandQueueList,
+    private val commandMap: CommandMap,
+    private val commandHandlerRouter: CommandHandlerRouter
 ) {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private var channel: Channel? = null
 
-    fun start() {
+    internal fun start() {
         coroutineScope.launch {
             channel = connection.createChannel().also { subscribeToQueues(it) }
         }
@@ -30,11 +34,25 @@ class RabbitMQSubscriptionsManager(
                     "$exchangeName.${queue.name}",
                     false,
                     DeliverCallback { _, message ->
-                        channel.basicAck(message.envelope.deliveryTag, false)
+                        runBlocking {
+                            try {
+                                commandHandlerRouter.handle(deserializeCommand(message))
+
+                                channel.basicAck(message.envelope.deliveryTag, false)
+                            } catch (_: Exception) {
+                                channel.basicNack(message.envelope.deliveryTag, false, false)
+                            }
+                        }
                     },
                     CancelCallback {}
                 )
             }
         }
+    }
+
+    private fun deserializeCommand(message: Delivery): Command {
+        @OptIn(InternalSerializationApi::class)
+        val serializer = commandMap.classFor(message.properties.type).serializer()
+        return Json.decodeFromString(serializer, message.body.decodeToString())
     }
 }

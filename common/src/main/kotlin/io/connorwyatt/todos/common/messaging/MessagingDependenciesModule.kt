@@ -6,6 +6,9 @@ import io.connorwyatt.todos.common.messaging.commands.CommandMapDefinition
 import io.connorwyatt.todos.common.messaging.commands.bus.CommandBus
 import io.connorwyatt.todos.common.messaging.commands.bus.NoopCommandBus
 import io.connorwyatt.todos.common.messaging.commands.bus.RabbitMQCommandBus
+import io.connorwyatt.todos.common.messaging.commands.commandhandlers.CommandHandlerDefinition
+import io.connorwyatt.todos.common.messaging.commands.commandhandlers.CommandHandlerMap
+import io.connorwyatt.todos.common.messaging.commands.commandhandlers.CommandHandlerRouter
 import io.connorwyatt.todos.common.messaging.commands.commandhandlers.RabbitMQSubscriptionsManager
 import io.connorwyatt.todos.common.messaging.commands.queues.*
 import org.kodein.di.*
@@ -36,7 +39,9 @@ fun messagingDependenciesModule(rabbitMQConfiguration: RabbitMQConfiguration): D
                 RabbitMQSubscriptionsManager(
                     rabbitMQConfiguration.exchangeName,
                     instance(),
-                    instance()
+                    instance(),
+                    instance(),
+                    instance(),
                 )
             }
         } else {
@@ -49,4 +54,15 @@ fun messagingDependenciesModule(rabbitMQConfiguration: RabbitMQConfiguration): D
 
         bindSingletonOf(::CommandMap)
         bindSet<CommandMapDefinition>()
+
+        bindSingletonOf(::CommandHandlerMap)
+        bindSet<CommandHandlerDefinition>()
+
+        bindSingleton {
+            CommandHandlerRouter { clazz ->
+                val creator = instance<CommandHandlerMap>().creatorFor(clazz)
+
+                newInstance { creator(this) }
+            }
+        }
     }
