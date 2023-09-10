@@ -1,6 +1,7 @@
 package io.connorwyatt.todos.common.messaging
 
 data class RabbitMQConfiguration(
-    val connectionString: String,
-    val exchangeName: String,
+    val useInMemoryRabbitMQ: Boolean,
+    val connectionString: String?,
+    val exchangeName: String?,
 )

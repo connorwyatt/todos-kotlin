@@ -19,6 +19,7 @@
     </root>
 
     <logger name="com.eventstore" level="WARN"/>
+    <logger name="com.rabbitmq" level="WARN"/>
     <logger name="io.grpc.netty" level="WARN"/>
     <logger name="io.netty" level="WARN"/>
 </configuration>

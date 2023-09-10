@@ -3,7 +3,9 @@ package io.connorwyatt.todos.restapi.app
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
 import io.connorwyatt.todos.common.commonDependenciesModule
-import io.connorwyatt.todos.common.configureCommon
+import io.connorwyatt.todos.common.configureEventStore
+import io.connorwyatt.todos.common.configureRabbitMQ
+import io.connorwyatt.todos.common.messaging.bindCommandQueueDefinition
 import io.connorwyatt.todos.data.todosDataDependenciesModule
 import io.connorwyatt.todos.domain.todosDomainDependenciesModule
 import io.connorwyatt.todos.projector.todosProjectorDependenciesModule
@@ -19,12 +21,13 @@ import org.kodein.di.ktor.*
 
 fun applicationDependenciesModule(configuration: Configuration): DI.Module =
     DI.Module(name = ::applicationDependenciesModule.name) {
-        import(commonDependenciesModule(configuration.eventStore))
+        import(commonDependenciesModule(configuration.eventStore, configuration.rabbitMQ))
         import(todosDataDependenciesModule)
         import(todosDomainDependenciesModule)
         import(todosProjectorDependenciesModule)
         bindProviderOf(::TodosService)
         bindProviderOf(::TodoMapper)
+        bindCommandQueueDefinition("commands")
     }
 
 fun main() {
@@ -38,7 +41,8 @@ fun main() {
 
 fun Application.module(configuration: Configuration, diConfiguration: DI) {
     di { extend(diConfiguration) }
-    configureCommon(configuration.eventStore)
+    configureEventStore(configuration.eventStore)
+    configureRabbitMQ()
     configureSerialization()
     configureRouting()
 }

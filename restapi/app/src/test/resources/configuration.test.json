@@ -3,6 +3,6 @@
     "useInMemoryEventStore": true
   },
   "rabbitMQ": {
-    "connectionString": ""
+    "useInMemoryRabbitMQ": true
   }
 }

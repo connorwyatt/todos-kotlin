@@ -1,9 +1,10 @@
 {
   "eventStore": {
-    "connectionString": null,
-    "useInMemoryEventStore": false
+    "useInMemoryEventStore": false,
+    "connectionString": null
   },
   "rabbitMQ": {
+    "useInMemoryRabbitMQ": false,
     "connectionString": null,
     "exchangeName": "todos"
   }
