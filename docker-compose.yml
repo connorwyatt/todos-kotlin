@@ -20,7 +20,17 @@ services:
       - type: volume
         source: eventstore-volume-logs
         target: /var/log/eventstore
+  rabbitmq:
+    image: rabbitmq:3.12.4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - type: volume
+        source: rabbitmq-volume-data
+        target: /var/lib/rabbitmq
 
 volumes:
   eventstore-volume-data:
   eventstore-volume-logs:
+  rabbitmq-volume-data:

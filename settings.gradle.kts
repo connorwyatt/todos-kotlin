@@ -43,6 +43,7 @@ dependencyResolutionManagement {
         val kotlinVersion: String by settings
         val kotlinxSerializationVersion: String by settings
         val ktorVersion: String by settings
+        val rabbitMQClientVersion: String by settings
         val striktVersion: String by settings
 
         create("libraries") {
@@ -68,6 +69,9 @@ dependencyResolutionManagement {
             library("ktor-server-netty", "io.ktor", "ktor-server-netty").version(ktorVersion)
             library("ktor-serialization-kotlinx-json", "io.ktor", "ktor-serialization-kotlinx-json").version(
                 ktorVersion
+            )
+            library("rabbitMQ-client", "com.rabbitmq", "amqp-client").version(
+                rabbitMQClientVersion
             )
         }
 

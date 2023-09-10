@@ -1,5 +1,8 @@
 {
   "eventStore": {
     "connectionString": "esdb://admin:changeit@localhost:2113?tls=false"
+  },
+  "rabbitMQ": {
+    "connectionString": "amqp://guest:guest@localhost:5672"
   }
 }

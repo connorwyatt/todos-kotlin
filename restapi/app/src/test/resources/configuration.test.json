@@ -1,5 +1,8 @@
 {
   "eventStore": {
     "useInMemoryEventStore": true
+  },
+  "rabbitMQ": {
+    "connectionString": ""
   }
 }

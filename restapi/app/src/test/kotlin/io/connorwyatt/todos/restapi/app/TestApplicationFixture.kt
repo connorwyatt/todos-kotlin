@@ -43,6 +43,9 @@ fun testApplicationFixture(di: DI, block: suspend TestApplicationFixture.() -> U
 
 private val configuration =
     ConfigLoaderBuilder.default()
-        .apply { addResourceSource("/configuration.test.json") }
+        .apply {
+            addResourceSource("/configuration.test.json")
+            addResourceSource("/configuration.json")
+        }
         .build()
         .loadConfigOrThrow<Configuration>()
