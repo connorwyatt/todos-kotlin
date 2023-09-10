@@ -16,7 +16,7 @@ class EventStoreSubscriptionsManager(
     private var jobs = emptyList<Job>()
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-    fun start() =
+    fun start() {
         coroutineScope.launch {
             jobs =
                 jobs.plus(
@@ -40,6 +40,7 @@ class EventStoreSubscriptionsManager(
                     }
                 )
         }
+    }
 
     private fun subscribe(
         streamDescriptor: StreamDescriptor,
