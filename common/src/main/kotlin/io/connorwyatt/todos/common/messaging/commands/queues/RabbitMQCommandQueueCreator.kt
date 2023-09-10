@@ -16,7 +16,7 @@ class RabbitMQCommandQueueCreator(
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     override suspend fun createQueues() {
-        coroutineScope.launch { connection.createChannel().use { createQueues(it) } }
+        connection.createChannel().use { createQueues(it) }
     }
 
     private suspend fun createQueues(channel: Channel) {
