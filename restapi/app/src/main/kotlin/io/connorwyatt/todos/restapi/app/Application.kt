@@ -6,6 +6,7 @@ import io.connorwyatt.todos.common.commonDependenciesModule
 import io.connorwyatt.todos.common.configureEventStore
 import io.connorwyatt.todos.common.configureRabbitMQ
 import io.connorwyatt.todos.common.messaging.bindCommandQueueDefinition
+import io.connorwyatt.todos.common.messaging.bindCommandRoutingRules
 import io.connorwyatt.todos.data.todosDataDependenciesModule
 import io.connorwyatt.todos.domain.todosDomainDependenciesModule
 import io.connorwyatt.todos.projector.todosProjectorDependenciesModule
@@ -28,6 +29,7 @@ fun applicationDependenciesModule(configuration: Configuration): DI.Module =
         bindProviderOf(::TodosService)
         bindProviderOf(::TodoMapper)
         bindCommandQueueDefinition("commands")
+        bindCommandRoutingRules { defaultQueue("commands") }
     }
 
 fun main() {
