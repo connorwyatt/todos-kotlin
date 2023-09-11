@@ -25,14 +25,11 @@ fun applicationDependenciesModule(configuration: Configuration): DI.Module =
         import(commonDependenciesModule(configuration.eventStore, configuration.rabbitMQ))
         import(todosDataDependenciesModule)
         import(todosDomainDependenciesModule)
-        //        import(todosMessagesCommandsDependenciesModule)
         import(todosProjectorDependenciesModule)
         bindProviderOf(::TodosService)
         bindProviderOf(::TodoMapper)
         bindCommandQueueDefinition("commands")
         bindCommandRoutingRules { defaultQueue("commands") }
-        //        bindCommandHandler<AddTodo> { new(::AddTodoCommandHandler) }
-        //        bindCommandHandler<CompleteTodo> { new(::CompleteTodoCommandHandler) }
     }
 
 fun main() {
