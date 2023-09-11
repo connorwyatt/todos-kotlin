@@ -4,6 +4,8 @@ import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
 import io.connorwyatt.todos.common.domain.events.EventsRepository
 import io.connorwyatt.todos.common.domain.inmemory.InMemoryEventsRepository
+import io.connorwyatt.todos.common.messaging.commands.bus.CommandBus
+import io.connorwyatt.todos.common.messaging.commands.bus.InMemoryCommandBus
 import io.connorwyatt.todos.common.time.TimeUtilities
 import io.connorwyatt.todos.common.time.clock.Clock
 import io.connorwyatt.todos.common.time.clock.testing.FakeClock
@@ -13,7 +15,11 @@ import org.kodein.di.*
 
 class TestApplicationFixture(val applicationTestBuilder: ApplicationTestBuilder, val di: DI) {
     suspend fun waitForConsistency() {
+        val commandBus by di.instance<CommandBus>()
         val eventsRepository by di.instance<EventsRepository>()
+        (commandBus as InMemoryCommandBus).waitForEmptyCommandPropagationQueue(
+            Duration.ofSeconds(5)
+        )
         (eventsRepository as InMemoryEventsRepository).waitForEmptyEventPropagationQueue(
             Duration.ofSeconds(5)
         )

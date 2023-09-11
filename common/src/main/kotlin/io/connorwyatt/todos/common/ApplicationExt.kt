@@ -4,6 +4,9 @@ import io.connorwyatt.todos.common.domain.events.EventsRepository
 import io.connorwyatt.todos.common.domain.eventstore.EventStoreConfiguration
 import io.connorwyatt.todos.common.domain.eventstore.EventStoreSubscriptionsManager
 import io.connorwyatt.todos.common.domain.inmemory.InMemoryEventsRepository
+import io.connorwyatt.todos.common.messaging.RabbitMQConfiguration
+import io.connorwyatt.todos.common.messaging.commands.bus.CommandBus
+import io.connorwyatt.todos.common.messaging.commands.bus.InMemoryCommandBus
 import io.connorwyatt.todos.common.messaging.commands.commandhandlers.RabbitMQSubscriptionsManager
 import io.connorwyatt.todos.common.messaging.commands.queues.CommandQueueCreator
 import io.ktor.server.application.*
@@ -20,16 +23,22 @@ fun Application.configureEventStore(eventStoreConfiguration: EventStoreConfigura
 
     val eventsRepository by closestDI().instance<EventsRepository>()
 
-    launch { (eventsRepository as? InMemoryEventsRepository)?.run { startEventPropagation() } }
+    (eventsRepository as? InMemoryEventsRepository)?.run { startEventPropagation() }
 }
 
-fun Application.configureRabbitMQ() {
+fun Application.configureRabbitMQ(rabbitMQConfiguration: RabbitMQConfiguration) {
     val commandQueueCreator by closestDI().instance<CommandQueueCreator>()
-    val rabbitMQSubscriptionsManager by closestDI().instance<RabbitMQSubscriptionsManager>()
 
     launch {
         commandQueueCreator.createQueues()
 
-        rabbitMQSubscriptionsManager.start()
+        if (!rabbitMQConfiguration.useInMemoryRabbitMQ) {
+            val rabbitMQSubscriptionsManager by closestDI().instance<RabbitMQSubscriptionsManager>()
+            rabbitMQSubscriptionsManager.start()
+        }
+
+        val commandBus by closestDI().instance<CommandBus>()
+
+        (commandBus as? InMemoryCommandBus)?.run { startCommandPropagation() }
     }
 }
