@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":domain:events"))
+    implementation(project(":messages:commands"))
     implementation(project(":projector"))
     implementation(project(":restapi:models"))
 

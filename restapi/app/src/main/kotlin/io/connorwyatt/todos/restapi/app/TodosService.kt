@@ -1,17 +1,19 @@
 package io.connorwyatt.todos.restapi.app
 
-import io.connorwyatt.todos.common.domain.aggregates.AggregatesRepository
+import io.connorwyatt.todos.common.messaging.commands.CommandEnvelope
+import io.connorwyatt.todos.common.messaging.commands.bus.CommandBus
 import io.connorwyatt.todos.data.TodosRepository
-import io.connorwyatt.todos.domain.Todo as TodoAggregate
+import io.connorwyatt.todos.messages.commands.AddTodo
+import io.connorwyatt.todos.messages.commands.CompleteTodo
 import io.connorwyatt.todos.restapi.app.mapping.TodoMapper
 import io.connorwyatt.todos.restapi.models.Todo
 import io.connorwyatt.todos.restapi.models.TodoDefinition
 import java.util.*
 
 class TodosService(
-    private val aggregatesRepository: AggregatesRepository,
     private val todosRepository: TodosRepository,
-    private val mapper: TodoMapper
+    private val mapper: TodoMapper,
+    private val commandBus: CommandBus
 ) {
     suspend fun retrieveTodos(): List<Todo> =
         todosRepository.searchTodos().map(mapper::fromDataModelToRestApiModel)
@@ -22,20 +24,12 @@ class TodosService(
     suspend fun addTodo(definition: TodoDefinition): String {
         val todoId = UUID.randomUUID().toString()
 
-        val aggregate = aggregatesRepository.load<TodoAggregate>(todoId)
-
-        aggregate.addTodo(definition.title)
-
-        aggregatesRepository.save(aggregate)
+        commandBus.send(CommandEnvelope(AddTodo(todoId, definition.title)))
 
         return todoId
     }
 
     suspend fun completeTodo(todoId: String) {
-        val aggregate = aggregatesRepository.load<TodoAggregate>(todoId)
-
-        aggregate.completeTodo()
-
-        aggregatesRepository.save(aggregate)
+        commandBus.send(CommandEnvelope(CompleteTodo(todoId)))
     }
 }

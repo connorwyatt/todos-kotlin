@@ -5,10 +5,14 @@ import com.sksamuel.hoplite.addResourceSource
 import io.connorwyatt.todos.common.commonDependenciesModule
 import io.connorwyatt.todos.common.configureEventStore
 import io.connorwyatt.todos.common.configureRabbitMQ
+import io.connorwyatt.todos.common.messaging.bindCommandHandler
 import io.connorwyatt.todos.common.messaging.bindCommandQueueDefinition
 import io.connorwyatt.todos.common.messaging.bindCommandRoutingRules
 import io.connorwyatt.todos.data.todosDataDependenciesModule
 import io.connorwyatt.todos.domain.todosDomainDependenciesModule
+import io.connorwyatt.todos.messages.commands.AddTodo
+import io.connorwyatt.todos.messages.commands.CompleteTodo
+import io.connorwyatt.todos.messages.commands.todosMessagesCommandsDependenciesModule
 import io.connorwyatt.todos.projector.todosProjectorDependenciesModule
 import io.connorwyatt.todos.restapi.app.mapping.TodoMapper
 import io.ktor.serialization.kotlinx.json.*
@@ -25,11 +29,14 @@ fun applicationDependenciesModule(configuration: Configuration): DI.Module =
         import(commonDependenciesModule(configuration.eventStore, configuration.rabbitMQ))
         import(todosDataDependenciesModule)
         import(todosDomainDependenciesModule)
+        import(todosMessagesCommandsDependenciesModule)
         import(todosProjectorDependenciesModule)
         bindProviderOf(::TodosService)
         bindProviderOf(::TodoMapper)
         bindCommandQueueDefinition("commands")
         bindCommandRoutingRules { defaultQueue("commands") }
+        bindCommandHandler<AddTodo> { new(::AddTodoCommandHandler) }
+        bindCommandHandler<CompleteTodo> { new(::CompleteTodoCommandHandler) }
     }
 
 fun main() {
