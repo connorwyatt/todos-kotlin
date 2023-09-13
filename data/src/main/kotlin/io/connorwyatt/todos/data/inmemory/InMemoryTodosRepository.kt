@@ -1,5 +1,6 @@
-package io.connorwyatt.todos.data
+package io.connorwyatt.todos.data.inmemory
 
+import io.connorwyatt.todos.data.TodosRepository
 import io.connorwyatt.todos.data.models.Todo
 
 class InMemoryTodosRepository : TodosRepository {

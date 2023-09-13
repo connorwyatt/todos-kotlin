@@ -12,6 +12,7 @@ dependencies {
     implementation(libraries.ktor.client.cio)
     implementation(libraries.ktor.client.core)
     implementation(libraries.ktor.server.core)
+    implementation(libraries.mongoDB.driver)
     implementation(libraries.rabbitMQ.client)
 
     testImplementation(testingLibraries.jUnit.jupiter)

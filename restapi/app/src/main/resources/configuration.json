@@ -1,7 +1,14 @@
 {
+  "data": {
+    "useInMemoryRepository": false
+  },
   "eventStore": {
     "useInMemoryEventStore": false,
     "connectionString": null
+  },
+  "mongoDB": {
+    "connectionString": null,
+    "databaseName": "todos"
   },
   "rabbitMQ": {
     "useInMemoryRabbitMQ": false,
