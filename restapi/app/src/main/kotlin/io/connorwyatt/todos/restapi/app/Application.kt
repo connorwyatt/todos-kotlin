@@ -21,6 +21,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.runBlocking
 import org.kodein.di.*
 import org.kodein.di.ktor.*
 
@@ -43,12 +44,14 @@ fun main() {
     val configuration = buildConfiguration()
 
     embeddedServer(Netty, port = 8080, host = "localhost") {
-            module(configuration, DI { import(applicationDependenciesModule(configuration)) })
+            runBlocking {
+                module(configuration, DI { import(applicationDependenciesModule(configuration)) })
+            }
         }
         .start(wait = true)
 }
 
-fun Application.module(configuration: Configuration, diConfiguration: DI) {
+suspend fun Application.module(configuration: Configuration, diConfiguration: DI) {
     di { extend(diConfiguration) }
     configureEventStore(configuration.eventStore)
     configureRabbitMQ(configuration.rabbitMQ)
