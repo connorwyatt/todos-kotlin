@@ -16,24 +16,26 @@ class RabbitMQCommandQueueCreator(
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     override suspend fun createQueues() {
-        connection.createChannel().use { createQueues(it) }
-    }
-
-    private suspend fun createQueues(channel: Channel) {
-        createExchange(channel, exchangeName)
+        createExchange(exchangeName)
 
         commandQueueList.definitions
-            .map { queue ->
-                coroutineScope.launch { createQueue(channel, exchangeName, queue.name) }
+            .map { definition ->
+                coroutineScope.launch {
+                    connection.createChannel().use { channel ->
+                        createQueue(channel, exchangeName, definition.name)
+                    }
+                }
             }
             .joinAll()
     }
 
-    private suspend fun createExchange(channel: Channel, exchangeName: String) {
-        channel.exchangeDeclare(exchangeName, "direct", true)
+    private fun createExchange(exchangeName: String) {
+        connection.createChannel().use { channel ->
+            channel.exchangeDeclare(exchangeName, "direct", true)
+        }
     }
 
-    private suspend fun createQueue(channel: Channel, exchangeName: String, queueName: String) {
+    private fun createQueue(channel: Channel, exchangeName: String, queueName: String) {
         val fullQueueName = "$exchangeName.${queueName}"
         val deadLetterQueueName = "${fullQueueName}.dlq"
 
