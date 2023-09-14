@@ -1,6 +1,7 @@
 package io.connorwyatt.todos.restapi.app
 
 import io.connorwyatt.todos.restapi.models.TodoDefinition
+import io.connorwyatt.todos.restapi.models.TodoPatch
 import io.connorwyatt.todos.restapi.models.TodoReference
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -28,7 +29,7 @@ fun Routing.addTodosRoutes() {
 
             val todoId = service.addTodo(definition)
 
-            call.respond(HttpStatusCode.Created, TodoReference(todoId))
+            call.respond(HttpStatusCode.Accepted, TodoReference(todoId))
         }
 
         route("{todoId}") {
@@ -45,6 +46,32 @@ fun Routing.addTodosRoutes() {
                 }
 
                 call.respond(HttpStatusCode.OK, todo)
+            }
+
+            patch {
+                val service by call.closestDI().instance<TodosService>()
+
+                val todoId = call.parameters.getOrFail("todoId")
+
+                val todo = service.retrieveTodo(todoId)
+
+                if (todo == null) {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@patch
+                }
+
+                if (todo.isComplete) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@patch
+                }
+
+                val todoPatch = call.receive<TodoPatch>()
+
+                // TODO: Validation.
+
+                service.updateTodo(todoId, todoPatch)
+
+                call.respond(HttpStatusCode.Accepted)
             }
 
             post("actions/complete") {
@@ -66,7 +93,7 @@ fun Routing.addTodosRoutes() {
 
                 service.completeTodo(todoId)
 
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.Accepted)
             }
         }
     }

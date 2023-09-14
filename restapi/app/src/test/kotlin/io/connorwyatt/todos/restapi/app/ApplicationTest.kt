@@ -1,10 +1,12 @@
 package io.connorwyatt.todos.restapi.app
 
+import io.connorwyatt.todos.common.models.Optional.Present
 import io.connorwyatt.todos.common.time.clock.Clock
 import io.connorwyatt.todos.common.time.clock.testing.FakeClock
 import io.connorwyatt.todos.restapi.client.HttpTodosClient
 import io.connorwyatt.todos.restapi.models.Todo
 import io.connorwyatt.todos.restapi.models.TodoDefinition
+import io.connorwyatt.todos.restapi.models.TodoPatch
 import io.ktor.http.*
 import java.time.Duration
 import kotlinx.coroutines.runBlocking
@@ -28,6 +30,26 @@ class ApplicationTest {
 
             retrieveTodo(todosClient, todoId).also {
                 expectThat(it).isEqualTo(Todo(todoId, "Clean my room", clock.now(), false, null))
+            }
+        }
+    }
+
+    @Test
+    fun `when a todo is updated, then it is updated`() = runBlocking {
+        testApplicationFixture {
+            val client = applicationTestBuilder.createJsonClient()
+            val todosClient = HttpTodosClient(client)
+
+            val todoId = addTodo(todosClient, TodoDefinition("Cleen my room"))
+
+            waitForConsistency()
+
+            updateTodo(todosClient, todoId, TodoPatch(Present("Clean my room")))
+
+            waitForConsistency()
+
+            retrieveTodo(todosClient, todoId).also {
+                expectThat(it.title).isEqualTo("Clean my room")
             }
         }
     }
@@ -69,11 +91,18 @@ class ApplicationTest {
     private suspend fun addTodo(client: HttpTodosClient, definition: TodoDefinition): String =
         client
             .addTodo(definition)
-            .also { expectThat(it.status).isEqualTo(HttpStatusCode.Created) }
+            .also { expectThat(it.status).isEqualTo(HttpStatusCode.Accepted) }
             .body()
             .id
 
+    private suspend fun updateTodo(client: HttpTodosClient, todoId: String, patch: TodoPatch) =
+        client.updateTodo(todoId, patch).also {
+            expectThat(it.status).isEqualTo(HttpStatusCode.Accepted)
+        }
+
     private suspend fun completeTodo(client: HttpTodosClient, todoId: String) {
-        client.completeTodo(todoId).also { expectThat(it.status).isEqualTo(HttpStatusCode.OK) }
+        client.completeTodo(todoId).also {
+            expectThat(it.status).isEqualTo(HttpStatusCode.Accepted)
+        }
     }
 }

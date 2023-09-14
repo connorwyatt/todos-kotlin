@@ -4,6 +4,7 @@ import io.connorwyatt.todos.common.http.EmptyHttpResult
 import io.connorwyatt.todos.common.http.HttpResult
 import io.connorwyatt.todos.restapi.models.Todo
 import io.connorwyatt.todos.restapi.models.TodoDefinition
+import io.connorwyatt.todos.restapi.models.TodoPatch
 import io.connorwyatt.todos.restapi.models.TodoReference
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -23,6 +24,14 @@ class HttpTodosClient(private val client: HttpClient) : TodosClient {
                 setBody(definition)
             }
             .let { HttpResult.fromResponse(it) }
+
+    override suspend fun updateTodo(todoId: String, patch: TodoPatch): EmptyHttpResult =
+        client
+            .patch("todos/$todoId") {
+                contentType(ContentType.Application.Json)
+                setBody(patch)
+            }
+            .let { EmptyHttpResult.fromResponse(it) }
 
     override suspend fun completeTodo(todoId: String): EmptyHttpResult =
         client

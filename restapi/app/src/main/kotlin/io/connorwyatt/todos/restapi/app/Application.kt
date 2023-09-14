@@ -13,6 +13,7 @@ import io.connorwyatt.todos.data.todosDataDependenciesModule
 import io.connorwyatt.todos.domain.todosDomainDependenciesModule
 import io.connorwyatt.todos.messages.commands.AddTodo
 import io.connorwyatt.todos.messages.commands.CompleteTodo
+import io.connorwyatt.todos.messages.commands.UpdateTodo
 import io.connorwyatt.todos.messages.commands.todosMessagesCommandsDependenciesModule
 import io.connorwyatt.todos.projector.todosProjectorDependenciesModule
 import io.connorwyatt.todos.restapi.app.mapping.TodoMapper
@@ -45,6 +46,7 @@ fun applicationDependenciesModule(configuration: Configuration): DI.Module =
         bindCommandQueueDefinition("commands")
         bindCommandRoutingRules { defaultQueue("commands") }
         bindCommandHandler<AddTodo> { new(::AddTodoCommandHandler) }
+        bindCommandHandler<UpdateTodo> { new(::UpdateTodoCommandHandler) }
         bindCommandHandler<CompleteTodo> { new(::CompleteTodoCommandHandler) }
     }
 
