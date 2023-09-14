@@ -1,5 +1,6 @@
 package io.connorwyatt.todos.common
 
+import io.connorwyatt.todos.common.data.configuration.DataConfiguration
 import io.connorwyatt.todos.common.data.mongodb.MongoDBConfiguration
 import io.connorwyatt.todos.common.data.mongodb.mongoDBDependenciesModule
 import io.connorwyatt.todos.common.domain.domainDependenciesModule
@@ -11,6 +12,7 @@ import io.connorwyatt.todos.common.time.timeDependenciesModule
 import org.kodein.di.*
 
 fun commonDependenciesModule(
+    dataConfiguration: DataConfiguration,
     eventStoreConfiguration: EventStoreConfiguration,
     mongoDBConfiguration: MongoDBConfiguration,
     rabbitMQConfiguration: RabbitMQConfiguration,
@@ -19,6 +21,6 @@ fun commonDependenciesModule(
         import(domainDependenciesModule(eventStoreConfiguration))
         import(httpDependenciesModule)
         import(messagingDependenciesModule(rabbitMQConfiguration))
-        import(mongoDBDependenciesModule(mongoDBConfiguration))
+        import(mongoDBDependenciesModule(dataConfiguration, mongoDBConfiguration))
         import(timeDependenciesModule)
     }

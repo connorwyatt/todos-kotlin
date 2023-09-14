@@ -1,5 +1,7 @@
 package io.connorwyatt.todos.projector
 
+import io.connorwyatt.todos.common.data.cursors.Cursor
+import io.connorwyatt.todos.common.domain.eventhandlers.SubscriptionName
 import io.connorwyatt.todos.common.domain.events.EventMetadata
 import io.connorwyatt.todos.common.domain.projector.Projector
 import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
@@ -8,22 +10,21 @@ import io.connorwyatt.todos.data.models.Todo
 import io.connorwyatt.todos.domain.events.TodoAdded
 import io.connorwyatt.todos.domain.events.TodoCompleted
 
-class InMemoryTodosProjector(private val repository: TodosRepository) : Projector() {
-    private var streamPositions = emptyMap<StreamDescriptor, Long>()
+@SubscriptionName("todos-projector")
+class TodosProjector(private val repository: TodosRepository) : Projector() {
 
     init {
         handle<TodoAdded>(::handle)
         handle<TodoCompleted>(::handle)
     }
 
-    override suspend fun streamPosition(streamDescriptor: StreamDescriptor): Long? =
-        streamPositions[streamDescriptor]
-
-    override suspend fun updateStreamPosition(
+    override suspend fun streamPosition(
+        subscriptionName: String,
         streamDescriptor: StreamDescriptor,
-        streamPosition: Long
-    ) {
-        streamPositions.plus(streamDescriptor to streamPosition)
+    ): Long? = repository.getStreamPosition(subscriptionName(), streamDescriptor.streamName)
+
+    override suspend fun updateStreamPosition(cursor: Cursor) {
+        repository.updateStreamPosition(cursor)
     }
 
     private suspend fun handle(event: TodoAdded, metadata: EventMetadata) {

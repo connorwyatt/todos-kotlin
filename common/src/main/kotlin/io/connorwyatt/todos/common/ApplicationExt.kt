@@ -28,9 +28,9 @@ fun Application.configureEventStore(eventStoreConfiguration: EventStoreConfigura
 }
 
 suspend fun Application.configureMongoDB() {
-    val mongoDBInitializer by closestDI().instance<MongoDBInitializer>()
+    val mongoDBInitializer by closestDI().instanceOrNull<MongoDBInitializer>()
 
-    mongoDBInitializer.initialize()
+    mongoDBInitializer?.initialize()
 }
 
 fun Application.configureRabbitMQ(rabbitMQConfiguration: RabbitMQConfiguration) {
