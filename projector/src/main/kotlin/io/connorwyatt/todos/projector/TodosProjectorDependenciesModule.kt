@@ -6,7 +6,7 @@ import org.kodein.di.*
 
 val todosProjectorDependenciesModule by
     DI.Module {
-        bindEventHandler<InMemoryTodosProjector>(setOf(StreamDescriptor.Category("todos"))) {
-            new(::InMemoryTodosProjector)
+        bindEventHandler<TodosProjector>(setOf(StreamDescriptor.Category("todos"))) {
+            new(::TodosProjector)
         }
     }

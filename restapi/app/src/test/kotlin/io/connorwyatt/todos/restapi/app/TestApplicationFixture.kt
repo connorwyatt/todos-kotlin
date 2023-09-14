@@ -11,6 +11,7 @@ import io.connorwyatt.todos.common.time.clock.Clock
 import io.connorwyatt.todos.common.time.clock.testing.FakeClock
 import io.ktor.server.testing.*
 import java.time.Duration
+import kotlinx.coroutines.runBlocking
 import org.kodein.di.*
 
 class TestApplicationFixture(val applicationTestBuilder: ApplicationTestBuilder, val di: DI) {
@@ -41,7 +42,7 @@ fun testApplicationFixture(block: suspend TestApplicationFixture.() -> Unit) {
 
 fun testApplicationFixture(di: DI, block: suspend TestApplicationFixture.() -> Unit) {
     testApplication {
-        application { module(configuration, di) }
+        application { runBlocking { module(configuration, di) } }
 
         block(TestApplicationFixture(this, di))
     }

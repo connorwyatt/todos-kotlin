@@ -10,7 +10,7 @@ abstract class Projector : EventHandler() {
 
         return when {
             versioned.version == expectedVersion -> false
-            versioned.version < expectedVersion -> true
+            versioned.version > expectedVersion -> true
             else ->
                 throw Exception(
                     "Expected version $expectedVersion, but found ${versioned.version}."

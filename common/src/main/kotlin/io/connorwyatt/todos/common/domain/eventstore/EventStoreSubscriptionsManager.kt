@@ -5,7 +5,11 @@ import io.connorwyatt.todos.common.domain.eventhandlers.EventHandler
 import io.connorwyatt.todos.common.domain.eventhandlers.EventHandlerMap
 import io.connorwyatt.todos.common.domain.events.ResolvedEventMapper
 import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class EventStoreSubscriptionsManager(
     private val eventStoreClientWrapper: EventStoreClientWrapper,
@@ -27,9 +31,12 @@ class EventStoreSubscriptionsManager(
                         streamDescriptors.map { streamDescriptor ->
                             val subscribeToStreamOptions =
                                 SubscribeToStreamOptions.get().resolveLinkTos(true).apply {
-                                    eventHandler.streamPosition(streamDescriptor)?.let {
-                                        fromRevision(it)
-                                    }
+                                    eventHandler
+                                        .streamPosition(
+                                            eventHandler.subscriptionName(),
+                                            streamDescriptor
+                                        )
+                                        ?.let { fromRevision(it) }
                                         ?: fromStart()
                                 }
 

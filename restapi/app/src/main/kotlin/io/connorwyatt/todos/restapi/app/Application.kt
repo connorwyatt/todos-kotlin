@@ -4,6 +4,7 @@ import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
 import io.connorwyatt.todos.common.commonDependenciesModule
 import io.connorwyatt.todos.common.configureEventStore
+import io.connorwyatt.todos.common.configureMongoDB
 import io.connorwyatt.todos.common.configureRabbitMQ
 import io.connorwyatt.todos.common.messaging.bindCommandHandler
 import io.connorwyatt.todos.common.messaging.bindCommandQueueDefinition
@@ -27,8 +28,15 @@ import org.kodein.di.ktor.*
 
 fun applicationDependenciesModule(configuration: Configuration): DI.Module =
     DI.Module(name = ::applicationDependenciesModule.name) {
-        import(commonDependenciesModule(configuration.eventStore, configuration.rabbitMQ))
-        import(todosDataDependenciesModule)
+        import(
+            commonDependenciesModule(
+                configuration.data,
+                configuration.eventStore,
+                configuration.mongoDB,
+                configuration.rabbitMQ
+            )
+        )
+        import(todosDataDependenciesModule(configuration.data, configuration.mongoDB))
         import(todosDomainDependenciesModule)
         import(todosMessagesCommandsDependenciesModule)
         import(todosProjectorDependenciesModule)
@@ -53,6 +61,7 @@ fun main() {
 
 suspend fun Application.module(configuration: Configuration, diConfiguration: DI) {
     di { extend(diConfiguration) }
+    configureMongoDB()
     configureEventStore(configuration.eventStore)
     configureRabbitMQ(configuration.rabbitMQ)
     configureSerialization()

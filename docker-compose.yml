@@ -20,6 +20,19 @@ services:
       - type: volume
         source: eventstore-volume-logs
         target: /var/log/eventstore
+
+  mongo:
+    image: mongo:7.0.1
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: volume
+        source: mongo-volume-data
+        target: /data/db
+
   rabbitmq:
     image: rabbitmq:3.12.4-management
     ports:
@@ -33,4 +46,5 @@ services:
 volumes:
   eventstore-volume-data:
   eventstore-volume-logs:
+  mongo-volume-data:
   rabbitmq-volume-data:

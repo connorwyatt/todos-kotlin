@@ -44,6 +44,7 @@ dependencyResolutionManagement {
         val kotlinVersion: String by settings
         val kotlinxSerializationVersion: String by settings
         val ktorVersion: String by settings
+        val mongoDBDriverVersion: String by settings
         val rabbitMQClientVersion: String by settings
         val striktVersion: String by settings
 
@@ -71,6 +72,7 @@ dependencyResolutionManagement {
             library("ktor-serialization-kotlinx-json", "io.ktor", "ktor-serialization-kotlinx-json").version(
                 ktorVersion
             )
+            library("mongoDB-driver", "org.mongodb", "mongodb-driver-kotlin-coroutine").version(mongoDBDriverVersion)
             library("rabbitMQ-client", "com.rabbitmq", "amqp-client").version(
                 rabbitMQClientVersion
             )

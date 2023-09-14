@@ -1,5 +1,6 @@
 package io.connorwyatt.todos.common
 
+import io.connorwyatt.todos.common.data.mongodb.MongoDBInitializer
 import io.connorwyatt.todos.common.domain.events.EventsRepository
 import io.connorwyatt.todos.common.domain.eventstore.EventStoreConfiguration
 import io.connorwyatt.todos.common.domain.eventstore.EventStoreSubscriptionsManager
@@ -24,6 +25,12 @@ fun Application.configureEventStore(eventStoreConfiguration: EventStoreConfigura
     val eventsRepository by closestDI().instance<EventsRepository>()
 
     (eventsRepository as? InMemoryEventsRepository)?.run { startEventPropagation() }
+}
+
+suspend fun Application.configureMongoDB() {
+    val mongoDBInitializer by closestDI().instanceOrNull<MongoDBInitializer>()
+
+    mongoDBInitializer?.initialize()
 }
 
 fun Application.configureRabbitMQ(rabbitMQConfiguration: RabbitMQConfiguration) {

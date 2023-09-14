@@ -1,5 +1,6 @@
 package io.connorwyatt.todos.data
 
+import io.connorwyatt.todos.common.data.cursors.Cursor
 import io.connorwyatt.todos.data.models.Todo
 
 interface TodosRepository {
@@ -10,4 +11,8 @@ interface TodosRepository {
     suspend fun insertTodo(todo: Todo)
 
     suspend fun updateTodo(todo: Todo)
+
+    suspend fun getStreamPosition(subscriptionName: String, streamName: String): Long?
+
+    suspend fun updateStreamPosition(cursor: Cursor)
 }
