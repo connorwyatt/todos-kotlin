@@ -9,6 +9,7 @@ import io.connorwyatt.todos.common.configureRabbitMQ
 import io.connorwyatt.todos.common.messaging.bindCommandHandler
 import io.connorwyatt.todos.common.messaging.bindCommandQueueDefinition
 import io.connorwyatt.todos.common.messaging.bindCommandRoutingRules
+import io.connorwyatt.todos.common.models.ValidationProblemResponse
 import io.connorwyatt.todos.data.todosDataDependenciesModule
 import io.connorwyatt.todos.domain.todosDomainDependenciesModule
 import io.connorwyatt.todos.messages.commands.AddTodo
@@ -17,11 +18,19 @@ import io.connorwyatt.todos.messages.commands.UpdateTodo
 import io.connorwyatt.todos.messages.commands.todosMessagesCommandsDependenciesModule
 import io.connorwyatt.todos.projector.todosProjectorDependenciesModule
 import io.connorwyatt.todos.restapi.app.mapping.TodoMapper
+import io.connorwyatt.todos.restapi.app.models.TodoDefinitionRequest
+import io.connorwyatt.todos.restapi.app.models.TodoPatchRequest
+import io.connorwyatt.todos.restapi.app.validation.TodoDefinitionRequestValidator
+import io.connorwyatt.todos.restapi.app.validation.TodoPatchRequestValidator
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.requestvalidation.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import org.kodein.di.*
@@ -66,6 +75,8 @@ suspend fun Application.module(configuration: Configuration, diConfiguration: DI
     configureEventStore(configuration.eventStore)
     configureRabbitMQ(configuration.rabbitMQ)
     configureSerialization()
+    configureRequestValidation()
+    configureStatusPages()
     configureRouting()
 }
 
@@ -82,6 +93,28 @@ private fun buildConfiguration(): Configuration =
 
 private fun Application.configureSerialization() {
     install(ContentNegotiation) { json() }
+}
+
+private fun Application.configureRequestValidation() {
+    install(RequestValidation) {
+        validate<TodoDefinitionRequest>(TodoDefinitionRequestValidator::validate)
+        validate<TodoPatchRequest>(TodoPatchRequestValidator::validate)
+    }
+}
+
+private fun Application.configureStatusPages() {
+    install(StatusPages) {
+        exception<RequestValidationException> { call, cause ->
+            call.response.headers.append(
+                HttpHeaders.ContentType,
+                ContentType.Application.ProblemJson.toString()
+            )
+            call.respond(HttpStatusCode.BadRequest, ValidationProblemResponse(cause.reasons))
+        }
+        exception<Throwable> { call, _ ->
+            call.respondText("", ContentType.Any, status = HttpStatusCode.InternalServerError)
+        }
+    }
 }
 
 private fun Application.configureRouting() {

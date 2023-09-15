@@ -1,7 +1,7 @@
 package io.connorwyatt.todos.restapi.app
 
-import io.connorwyatt.todos.restapi.models.TodoDefinition
-import io.connorwyatt.todos.restapi.models.TodoPatch
+import io.connorwyatt.todos.restapi.app.models.TodoDefinitionRequest
+import io.connorwyatt.todos.restapi.app.models.TodoPatchRequest
 import io.connorwyatt.todos.restapi.models.TodoReference
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -23,11 +23,9 @@ fun Routing.addTodosRoutes() {
         post {
             val service by call.closestDI().instance<TodosService>()
 
-            val definition = call.receive<TodoDefinition>()
+            val request = call.receive<TodoDefinitionRequest>()
 
-            // TODO: Validation.
-
-            val todoId = service.addTodo(definition)
+            val todoId = service.addTodo(request.toModel())
 
             call.respond(HttpStatusCode.Accepted, TodoReference(todoId))
         }
@@ -65,11 +63,9 @@ fun Routing.addTodosRoutes() {
                     return@patch
                 }
 
-                val todoPatch = call.receive<TodoPatch>()
+                val todoPatch = call.receive<TodoPatchRequest>()
 
-                // TODO: Validation.
-
-                service.updateTodo(todoId, todoPatch)
+                service.updateTodo(todoId, todoPatch.toModel())
 
                 call.respond(HttpStatusCode.Accepted)
             }

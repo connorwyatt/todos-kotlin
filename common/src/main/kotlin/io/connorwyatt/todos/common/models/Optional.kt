@@ -12,6 +12,14 @@ import kotlinx.serialization.*
  */
 @Serializable(with = OptionalSerializer::class)
 sealed interface Optional<out T> {
+    fun <R> ifPresent(block: (T) -> R): R? {
+        if (this is Present) {
+            return block(this.value)
+        }
+
+        return null
+    }
+
     data class Present<out T>(val value: T) : Optional<T> {
         override fun toString() = value.toString()
     }

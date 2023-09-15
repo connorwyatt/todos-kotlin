@@ -33,6 +33,8 @@ dependencies {
     implementation(libraries.ktor.server.contentNegotiation)
     implementation(libraries.ktor.server.core)
     implementation(libraries.ktor.server.netty)
+    implementation(libraries.ktor.server.requestValidation)
+    implementation(libraries.ktor.server.statusPages)
 
     testImplementation(project(":restapi:client"))
 
