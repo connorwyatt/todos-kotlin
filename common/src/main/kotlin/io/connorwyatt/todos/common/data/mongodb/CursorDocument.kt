@@ -4,15 +4,15 @@ import io.connorwyatt.todos.common.data.cursors.Cursor
 import org.bson.codecs.pojo.annotations.BsonId
 
 @CollectionName("cursors")
-data class MongoDBCursor(
+data class CursorDocument(
     val subscriptionName: String,
     val streamName: String,
     val lastHandledStreamPosition: Long,
     @BsonId val _id: String = primaryKey(subscriptionName, streamName),
 ) {
     companion object {
-        fun fromCursor(todo: Cursor): MongoDBCursor =
-            MongoDBCursor(
+        fun fromCursor(todo: Cursor): CursorDocument =
+            CursorDocument(
                 todo.subscriptionName,
                 todo.streamName,
                 todo.lastHandledStreamPosition,

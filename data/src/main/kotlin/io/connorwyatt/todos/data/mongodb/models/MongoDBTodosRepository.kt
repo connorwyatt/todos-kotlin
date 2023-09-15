@@ -3,7 +3,7 @@ package io.connorwyatt.todos.data.mongodb.models
 import com.mongodb.client.model.Filters
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import io.connorwyatt.todos.common.data.cursors.Cursor
-import io.connorwyatt.todos.common.data.mongodb.MongoDBCursor
+import io.connorwyatt.todos.common.data.mongodb.CursorDocument
 import io.connorwyatt.todos.common.data.mongodb.collectionName
 import io.connorwyatt.todos.data.TodosRepository
 import io.connorwyatt.todos.data.models.Todo
@@ -20,26 +20,26 @@ class MongoDBTodosRepository(
 
     override suspend fun getTodo(todoId: String): Todo? =
         todosCollection()
-            .find(Filters.eq(MongoDBTodo::id.name, todoId))
+            .find(Filters.eq(TodoDocument::id.name, todoId))
             .showRecordId(false)
             .singleOrNull()
             ?.toTodo()
 
     override suspend fun insertTodo(todo: Todo) {
-        todosCollection().insertOne(MongoDBTodo.fromTodo(todo))
+        todosCollection().insertOne(TodoDocument.fromTodo(todo))
     }
 
     override suspend fun updateTodo(todo: Todo) {
         todosCollection()
-            .replaceOne(Filters.eq(MongoDBTodo::id.name, todo.id), MongoDBTodo.fromTodo(todo))
+            .replaceOne(Filters.eq(TodoDocument::id.name, todo.id), TodoDocument.fromTodo(todo))
     }
 
     override suspend fun getStreamPosition(subscriptionName: String, streamName: String): Long? =
         cursorsCollection()
             .find(
                 Filters.and(
-                    Filters.eq(MongoDBCursor::subscriptionName.name, subscriptionName),
-                    Filters.eq(MongoDBCursor::streamName.name, streamName),
+                    Filters.eq(CursorDocument::subscriptionName.name, subscriptionName),
+                    Filters.eq(CursorDocument::streamName.name, streamName),
                 )
             )
             .singleOrNull()
@@ -51,23 +51,23 @@ class MongoDBTodosRepository(
                 find(
                         Filters.and(
                             Filters.eq(
-                                MongoDBCursor::subscriptionName.name,
+                                CursorDocument::subscriptionName.name,
                                 cursor.subscriptionName
                             ),
-                            Filters.eq(MongoDBCursor::streamName.name, cursor.streamName),
+                            Filters.eq(CursorDocument::streamName.name, cursor.streamName),
                         )
                     )
                     .limit(1)
                     .toList()
                     .isNotEmpty()
 
-            val mongoDBCursor = MongoDBCursor.fromCursor(cursor)
+            val mongoDBCursor = CursorDocument.fromCursor(cursor)
 
             if (hasCursor) {
                 replaceOne(
                     Filters.and(
-                        Filters.eq(MongoDBCursor::subscriptionName.name, cursor.subscriptionName),
-                        Filters.eq(MongoDBCursor::streamName.name, cursor.streamName),
+                        Filters.eq(CursorDocument::subscriptionName.name, cursor.subscriptionName),
+                        Filters.eq(CursorDocument::streamName.name, cursor.streamName),
                     ),
                     mongoDBCursor
                 )
@@ -80,10 +80,10 @@ class MongoDBTodosRepository(
     private fun todosCollection() =
         mongoClient
             .getDatabase(databaseName)
-            .getCollection<MongoDBTodo>(collectionName<MongoDBTodo>())
+            .getCollection<TodoDocument>(collectionName<TodoDocument>())
 
     private fun cursorsCollection() =
         mongoClient
             .getDatabase(databaseName)
-            .getCollection<MongoDBCursor>(collectionName<MongoDBCursor>())
+            .getCollection<CursorDocument>(collectionName<CursorDocument>())
 }

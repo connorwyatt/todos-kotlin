@@ -6,7 +6,7 @@ import java.time.Instant
 import org.bson.codecs.pojo.annotations.BsonId
 
 @CollectionName("todos")
-internal data class MongoDBTodo(
+internal data class TodoDocument(
     val id: String,
     val title: String,
     val addedAt: Instant,
@@ -18,8 +18,8 @@ internal data class MongoDBTodo(
     fun toTodo(): Todo = Todo(id, title, addedAt, isComplete, completedAt, version)
 
     companion object {
-        fun fromTodo(todo: Todo): MongoDBTodo =
-            MongoDBTodo(
+        fun fromTodo(todo: Todo): TodoDocument =
+            TodoDocument(
                 todo.id,
                 todo.title,
                 todo.addedAt,
