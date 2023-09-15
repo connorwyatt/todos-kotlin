@@ -31,10 +31,9 @@ fun applicationDependenciesModule(configuration: Configuration): DI.Module =
     DI.Module(name = ::applicationDependenciesModule.name) {
         import(
             commonDependenciesModule(
-                configuration.data,
                 configuration.eventStore,
                 configuration.mongoDB,
-                configuration.rabbitMQ
+                configuration.rabbitMQ,
             )
         )
         import(todosDataDependenciesModule(configuration.data, configuration.mongoDB))

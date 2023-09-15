@@ -1,6 +1,6 @@
 {
   "data": {
-    "useInMemoryRepository": true
+    "repositoryImplementation": "InMemory"
   },
   "eventStore": {
     "useInMemoryEventStore": true

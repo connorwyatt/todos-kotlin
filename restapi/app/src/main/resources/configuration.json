@@ -1,6 +1,6 @@
 {
   "data": {
-    "useInMemoryRepository": false
+    "repositoryImplementation": "MongoDB"
   },
   "eventStore": {
     "useInMemoryEventStore": false,

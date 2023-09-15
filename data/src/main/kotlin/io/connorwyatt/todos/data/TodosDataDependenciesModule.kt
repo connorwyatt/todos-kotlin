@@ -1,6 +1,7 @@
 package io.connorwyatt.todos.data
 
 import io.connorwyatt.todos.common.data.configuration.DataConfiguration
+import io.connorwyatt.todos.common.data.configuration.RepositoryImplementation
 import io.connorwyatt.todos.common.data.mongodb.CursorDocument
 import io.connorwyatt.todos.common.data.mongodb.MongoDBConfiguration
 import io.connorwyatt.todos.common.data.mongodb.bindMongoDBCollection
@@ -17,11 +18,14 @@ fun todosDataDependenciesModule(
         bindMongoDBCollection<CursorDocument>()
         bindMongoDBCollection<TodoDocument>()
 
-        if (!dataConfiguration.useInMemoryRepository) {
-            bindProvider<TodosRepository> {
-                MongoDBTodosRepository(instance(), mongoDBConfiguration.databaseName)
+        when (dataConfiguration.repositoryImplementation) {
+            RepositoryImplementation.MongoDB -> {
+                bindProvider<TodosRepository> {
+                    MongoDBTodosRepository(instance(), mongoDBConfiguration.databaseName)
+                }
             }
-        } else {
-            bindSingleton<TodosRepository> { InMemoryTodosRepository() }
+            RepositoryImplementation.InMemory -> {
+                bindSingleton<TodosRepository> { InMemoryTodosRepository() }
+            }
         }
     }
