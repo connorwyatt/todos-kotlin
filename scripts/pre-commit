@@ -6,6 +6,22 @@ git stash -q --keep-index
 
 status=$?
 
+if [ $status != 0 ]; then
+        echo "Gradle check returned non-zero: $status, abort commit"
+        exit $status
+fi
+
+cd ui
+
+npm run check
+
+status=$?
+
+if [ $status != 0 ]; then
+        echo "UI check returned non-zero: $status, abort commit"
+        exit $status
+fi
+
 git stash pop -q
 
-exit $status
+exit 0
