@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client"
 import { ThemeProvider } from "styled-components"
 
 import { App } from "~/app"
-import { ReactQueryClientProvider } from "~/shared/extensions/react-query/react-query-client-provider"
+import { ReactQueryClientProvider } from "~/shared/react-query/react-query-client-provider"
 import { GlobalStyles } from "~/shared/styles/global.styles"
 import { theme } from "~/shared/styles/theme/theme"
 
