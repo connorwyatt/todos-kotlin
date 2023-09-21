@@ -1,15 +1,22 @@
-import { linearGradient, normalize } from "polished"
+import { fluidRange, linearGradient, normalize } from "polished"
 import { createGlobalStyle, css } from "styled-components"
 
-import { fontFaces } from "~/shared/styles/font-faces.styles"
+import { typographyStyleCss } from "~/shared/styles/utilities/typography-style-css"
 
 export const GlobalStyles = createGlobalStyle(
     ({ theme }) => css`
         ${normalize()};
-        ${fontFaces};
 
         :root {
-            font-size: 14px; /* stylelint-disable-line unit-allowed-list */
+            ${fluidRange(
+                {
+                    prop: "fontSize",
+                    fromSize: "14px",
+                    toSize: "16px",
+                },
+                "640px",
+                "1280px",
+            )};
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             font-synthesis: none;
@@ -21,16 +28,14 @@ export const GlobalStyles = createGlobalStyle(
         }
 
         body {
-            background-color: ${linearGradient({
+            ${linearGradient({
                 colorStops: theme.app.backgroundColors,
                 toDirection: "to top right",
                 fallback: theme.app.backgroundColors[0],
             })};
+            ${typographyStyleCss(theme.typography.styles.paragraph.normal)};
             background-size: cover;
             color: ${theme.app.textColor};
-            font-family: ${theme.typography.fontFamilies.body};
-            min-height: 100vh; /* stylelint-disable-line unit-allowed-list */
-            padding: 1rem;
         }
     `,
 )

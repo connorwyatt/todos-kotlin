@@ -15,6 +15,5 @@ module.exports = {
         },
         "order/order": ["custom-properties", "declarations", "rules", "at-rules"],
         "order/properties-alphabetical-order": true,
-        "unit-allowed-list": ["rem", "s", "%", "deg", "fr"],
     },
 }

@@ -1,7 +1,12 @@
-import { useTodos } from "~/todos/api/use-todos"
+import { Container, TodosListContainer } from "~/app.styles"
+import { TodosList } from "~/todos/components/todos-list"
 
 export const App = () => {
-    const { data: todos } = useTodos()
-
-    return <>{todos != null ? todos.map((todo) => <p key={todo.id}>{todo.title}</p>) : <p>Loading...</p>}</>
+    return (
+        <Container>
+            <TodosListContainer>
+                <TodosList />
+            </TodosListContainer>
+        </Container>
+    )
 }
