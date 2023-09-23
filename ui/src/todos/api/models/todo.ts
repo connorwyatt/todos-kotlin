@@ -3,5 +3,5 @@ export interface Todo {
     title: string
     addedAt: Date
     isComplete: boolean
-    completedAt: Date
+    completedAt: Date | null
 }

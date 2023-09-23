@@ -3,5 +3,5 @@ export interface TodoResponse {
     title: string
     addedAt: string
     isComplete: boolean
-    completedAt: string
+    completedAt: string | null
 }

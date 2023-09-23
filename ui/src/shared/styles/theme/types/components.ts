@@ -1,9 +1,9 @@
 import { Icons } from "~/shared/styles/theme/types/components/icons"
 import { Inputs } from "~/shared/styles/theme/types/components/inputs"
-import { TodosList } from "~/shared/styles/theme/types/components/todos-list"
+import { Panel } from "~/shared/styles/theme/types/components/panel"
 
 export interface Components {
     icons: Icons
     inputs: Inputs
-    todosList: TodosList
+    panel: Panel
 }

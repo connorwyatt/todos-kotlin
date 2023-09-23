@@ -1,14 +1,23 @@
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 
-export const Container = styled.div`
-    align-items: center;
-    display: grid;
-    grid-template: ". . ." 1fr ". todosList ." auto ". . ." 1fr / 1fr auto 1fr;
-    height: 100vh;
-    justify-content: center;
+export const Container = styled.div(
+    ({ theme }) => css`
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        height: 100vh;
+        justify-content: center;
+        margin: 0 auto;
+        max-width: 48rem;
+        overflow: hidden;
+        padding: ${theme.spacing.medium};
+    `,
+)
+
+export const AddTodoContainer = styled.div`
+    flex: 0 0 auto;
 `
 
 export const TodosListContainer = styled.div`
-    grid-area: todosList;
-    width: 48rem;
+    flex: 0 1 0;
 `
