@@ -22,8 +22,10 @@
         "@tanstack/react-query": "^4.35.3",
         "axios": "^1.5.0",
         "date-fns": "^2.30.0",
+        "ionicons": "^7.1.2",
         "polished": "^4.2.2",
         "qs": "^6.11.2",
+        "rambdax": "^10.0.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-use": "^17.4.0",
@@ -56,6 +58,7 @@
         "stylelint-order": "^6.0.3",
         "typescript": "^5.0.2",
         "vite": "^4.4.5",
+        "vite-plugin-svgr": "^4.0.0",
         "vitest": "^0.34.4"
     }
 }

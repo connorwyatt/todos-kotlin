@@ -10,6 +10,45 @@ export const theme: DefaultTheme = {
         textColor: typography.colors.primary,
     },
     components: {
+        icons: {
+            sizes: {
+                medium: "1rem",
+            },
+        },
+        inputs: {
+            checkbox: {
+                states: {
+                    checked: {
+                        normal: {
+                            backgroundColor: palette.transparent,
+                            borderColor: palette.onyx,
+                            tickColor: palette.biceBlue,
+                        },
+                        focus: {
+                            backgroundColor: transparentize(0.9, palette.argentinianBlue),
+                            borderColor: palette.biceBlue,
+                            tickColor: palette.biceBlue,
+                        },
+                    },
+                    unchecked: {
+                        normal: {
+                            backgroundColor: palette.transparent,
+                            borderColor: palette.onyx,
+                            tickColor: palette.transparent,
+                        },
+                        focus: {
+                            backgroundColor: transparentize(0.9, palette.argentinianBlue),
+                            borderColor: palette.biceBlue,
+                            tickColor: palette.transparent,
+                        },
+                    },
+                },
+                sizes: {
+                    medium: "1rem",
+                    large: "1.5rem",
+                },
+            },
+        },
         todosList: {
             backgroundColor: transparentize(0.25, palette.antiflashWhite),
             borderColor: palette.antiflashWhite,

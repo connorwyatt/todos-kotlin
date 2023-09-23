@@ -10,8 +10,20 @@ const getTodos = async (): Promise<Todo[]> => {
     return response.data.map(mapTodo)
 }
 
+const getTodo = async (todoId: string): Promise<Todo> => {
+    const response = await httpClient.get<TodoResponse>(`/api/todos/${todoId}`)
+
+    return mapTodo(response.data)
+}
+
+const completeTodo = async (todoId: string): Promise<void> => {
+    await httpClient.post(`/api/todos/${todoId}/actions/complete`)
+}
+
 export const todosClient = {
     getTodos,
+    getTodo,
+    completeTodo,
 }
 
 const mapTodo = ({ addedAt, completedAt, ...rest }: TodoResponse): Todo => ({

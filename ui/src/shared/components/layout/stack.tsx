@@ -1,16 +1,18 @@
 import { FC, PropsWithChildren } from "react"
 import { DefaultTheme } from "styled-components"
 
-import { Container } from "~/shared/components/layout/stack.styles"
+import { Container, ContainerProps } from "~/shared/components/layout/stack.styles"
 
 interface BaseStackProps extends PropsWithChildren {
-    direction: "horizontal" | "vertical"
+    align?: ContainerProps["$align"]
+    direction: ContainerProps["$direction"]
+    justify?: ContainerProps["$justify"]
     spacing?: keyof DefaultTheme["spacing"]
 }
 
-const BaseStack: FC<BaseStackProps> = ({ children, direction, spacing = null }) => {
+const BaseStack: FC<BaseStackProps> = ({ children, align = "top", direction, justify = "left", spacing = null }) => {
     return (
-        <Container $direction={direction} $spacing={spacing}>
+        <Container $align={align} $direction={direction} $justify={justify} $spacing={spacing}>
             {children}
         </Container>
     )
