@@ -10,6 +10,7 @@ export const Container = styled.div<ContainerProps>(
         border: 1px solid ${theme.components.panel.borderColor};
         border-radius: 0.5rem;
         box-shadow: 0 0.25rem 0.5rem ${theme.components.panel.shadowColor};
+        overflow: hidden;
         padding: ${!$removePadding && theme.spacing.medium};
     `,
 )

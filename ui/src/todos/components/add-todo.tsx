@@ -1,17 +1,21 @@
 import { yupResolver } from "@hookform/resolvers/yup"
 import { FC, useCallback } from "react"
 import { useForm } from "react-hook-form"
+import { useMeasure } from "react-use"
 import * as yup from "yup"
 
+import { Icon } from "~/shared/components/icons/icons"
 import { Panel } from "~/shared/components/layout/panel"
 import { useAddTodoMutation } from "~/todos/api/use-add-todo-mutation"
-import { Input } from "~/todos/components/add-todo.styles"
+import { Button, Form, Input } from "~/todos/components/add-todo.styles"
 
 interface AddTodoFormValues {
     title: string
 }
 
 export const AddTodo: FC = () => {
+    const [ref, { height }] = useMeasure<HTMLFormElement>()
+
     const {
         register,
         handleSubmit,
@@ -34,9 +38,13 @@ export const AddTodo: FC = () => {
     return (
         <div>
             <Panel removePadding>
-                <form onSubmit={!isSubmitting ? submit : undefined}>
+                <Form onSubmit={!isSubmitting ? submit : undefined} ref={ref}>
                     <Input {...register("title")} placeholder="Enter a todo" disabled={isSubmitting} autoFocus />
-                </form>
+
+                    <Button type="submit" $size={height}>
+                        <Icon name="arrowForward" />
+                    </Button>
+                </Form>
             </Panel>
         </div>
     )

@@ -1,6 +1,7 @@
 import { fluidRange, linearGradient, normalize } from "polished"
 import { createGlobalStyle, css } from "styled-components"
 
+import { themeDefaults } from "~/shared/styles/utilities/theme-defaults.styles"
 import { typographyStyleCss } from "~/shared/styles/utilities/typography-style-css"
 
 export const GlobalStyles = createGlobalStyle(
@@ -28,6 +29,7 @@ export const GlobalStyles = createGlobalStyle(
         }
 
         body {
+            ${themeDefaults};
             ${linearGradient({
                 colorStops: theme.app.backgroundColors,
                 toDirection: "to top right",
@@ -35,7 +37,11 @@ export const GlobalStyles = createGlobalStyle(
             })};
             ${typographyStyleCss(theme.typography.styles.paragraph.normal)};
             background-size: cover;
-            color: ${theme.app.textColor};
+        }
+
+        button,
+        input {
+            color: inherit;
         }
     `,
 )

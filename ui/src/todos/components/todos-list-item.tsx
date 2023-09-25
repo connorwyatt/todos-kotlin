@@ -13,7 +13,7 @@ export interface TodosListItemProps {
     todo: Todo | OptimisticTodo
 }
 
-export const TodosListItem: FC<TodosListItemProps> = ({ todo }) => {
+const TodosListItemInternal: FC<TodosListItemProps> = ({ todo }) => {
     const { mutate } = useCompleteTodoMutation()
 
     const isOptimistic = "isOptimistic" in todo
@@ -49,3 +49,23 @@ export const TodosListItem: FC<TodosListItemProps> = ({ todo }) => {
         </Container>
     )
 }
+
+const Skeleton: FC = () => {
+    return (
+        <Container $isOptimistic={false}>
+            <Stack.Horizontal spacing="medium" align="center">
+                <Checkbox size="large" value={false} displayOnly />
+
+                <Stack.Vertical>
+                    <Paragraph>Loading...</Paragraph>
+
+                    <ParagraphSubtext color="secondary" italicized>
+                        ...
+                    </ParagraphSubtext>
+                </Stack.Vertical>
+            </Stack.Horizontal>
+        </Container>
+    )
+}
+
+export const TodosListItem = Object.assign(TodosListItemInternal, { Skeleton })

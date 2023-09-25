@@ -5,7 +5,8 @@ export interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>(
-    ({ $isOptimistic }) => css`
+    ({ theme, $isOptimistic }) => css`
         opacity: ${$isOptimistic && 0.5};
+        padding: ${theme.spacing.small} ${theme.spacing.medium};
     `,
 )

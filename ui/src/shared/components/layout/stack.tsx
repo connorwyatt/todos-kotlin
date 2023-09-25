@@ -10,7 +10,13 @@ interface BaseStackProps extends PropsWithChildren {
     spacing?: keyof DefaultTheme["spacing"]
 }
 
-const BaseStack: FC<BaseStackProps> = ({ children, align = "top", direction, justify = "left", spacing = null }) => {
+const BaseStack: FC<BaseStackProps> = ({
+    children,
+    align = "stretch",
+    direction,
+    justify = "stretch",
+    spacing = null,
+}) => {
     return (
         <Container $align={align} $direction={direction} $justify={justify} $spacing={spacing}>
             {children}

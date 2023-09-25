@@ -6,7 +6,7 @@ import { Container, FakeInput, FakeInputTick, Input } from "~/shared/components/
 
 export interface CheckboxProps {
     displayOnly?: boolean
-    onChange: (newValue: boolean) => void
+    onChange?: (newValue: boolean) => void
     size?: keyof DefaultTheme["components"]["inputs"]["checkbox"]["sizes"]
     value: boolean
 }
@@ -14,7 +14,7 @@ export interface CheckboxProps {
 export const Checkbox: FC<CheckboxProps> = ({ displayOnly = false, onChange, size = "medium", value }) => {
     const handleChange = useCallback(
         (event: ChangeEvent<HTMLInputElement>) => {
-            onChange(event.target.checked)
+            onChange?.(event.target.checked)
         },
         [onChange],
     )
