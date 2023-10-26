@@ -27,6 +27,7 @@ dependencies {
     implementation(libraries.hoplite.core)
     implementation(libraries.hoplite.json)
     implementation(libraries.logback.classic)
+    implementation(libraries.logstash.logbackEncoder)
     implementation(libraries.kodein.di)
     implementation(libraries.kodein.di.framework.ktor.server)
     implementation(libraries.ktor.serialization.kotlinx.json)

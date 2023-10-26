@@ -40,6 +40,7 @@ dependencyResolutionManagement {
         val hopliteVersion: String by settings
         val jUnitVersion: String by settings
         val logbackVersion: String by settings
+        val logstashLogbackEncoderVersion: String by settings
         val kodeinVersion: String by settings
         val kotlinVersion: String by settings
         val kotlinxSerializationVersion: String by settings
@@ -53,6 +54,7 @@ dependencyResolutionManagement {
             library("hoplite-core","com.sksamuel.hoplite","hoplite-core").version(hopliteVersion)
             library("hoplite-json","com.sksamuel.hoplite","hoplite-json").version(hopliteVersion)
             library("logback-classic", "ch.qos.logback", "logback-classic").version(logbackVersion)
+            library("logstash-logbackEncoder", "net.logstash.logback", "logstash-logback-encoder").version(logstashLogbackEncoderVersion)
             library("kodein-di", "org.kodein.di", "kodein-di").version(kodeinVersion)
             library("kodein-di-framework-ktor-server", "org.kodein.di", "kodein-di-framework-ktor-server-jvm").version(kodeinVersion)
             library("kotlin-reflect", "org.jetbrains.kotlin", "kotlin-reflect").version(
