@@ -27,11 +27,15 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.callid.*
+import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.util.*
 import kotlinx.coroutines.runBlocking
 import org.kodein.di.*
 import org.kodein.di.ktor.*
@@ -77,6 +81,8 @@ suspend fun Application.module(configuration: Configuration, diConfiguration: DI
     configureSerialization()
     configureRequestValidation()
     configureStatusPages()
+    configureCallId()
+    configureCallLogging()
     configureRouting()
 }
 
@@ -114,6 +120,23 @@ private fun Application.configureStatusPages() {
         exception<Throwable> { call, _ ->
             call.respondText("", ContentType.Any, status = HttpStatusCode.InternalServerError)
         }
+    }
+}
+
+private fun Application.configureCallId() {
+    install(CallId) {
+        generate { UUID.randomUUID().toString() }
+        replyToHeader(HttpHeaders.XRequestId)
+    }
+}
+
+private fun Application.configureCallLogging() {
+    install(CallLogging) {
+        callIdMdc("request-id")
+        disableDefaultColors()
+        mdc("http-method") { call -> call.request.httpMethod.value }
+        mdc("request-url") { call -> call.request.uri }
+        mdc("status-code") { call -> call.response.status()?.value?.toString() }
     }
 }
 

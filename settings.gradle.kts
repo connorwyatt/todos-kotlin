@@ -69,6 +69,8 @@ dependencyResolutionManagement {
             library("ktor-serialization-kotlinx-json", "io.ktor", "ktor-serialization-kotlinx-json").version(
                 ktorVersion
             )
+            library("ktor-server-callId","io.ktor", "ktor-server-call-id").version(ktorVersion)
+            library("ktor-server-callLogging","io.ktor", "ktor-server-call-logging").version(ktorVersion)
             library("ktor-server-contentNegotiation", "io.ktor", "ktor-server-content-negotiation").version(
                 ktorVersion
             )
