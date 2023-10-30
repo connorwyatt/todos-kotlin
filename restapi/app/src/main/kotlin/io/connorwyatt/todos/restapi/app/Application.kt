@@ -1,7 +1,6 @@
 package io.connorwyatt.todos.restapi.app
 
-import com.sksamuel.hoplite.ConfigLoaderBuilder
-import com.sksamuel.hoplite.addResourceSource
+import io.connorwyatt.common.configuration.loadConfigurationFromJsonFiles
 import io.connorwyatt.common.eventstore.configureEventStore
 import io.connorwyatt.todos.common.commonDependenciesModule
 import io.connorwyatt.todos.common.configureMongoDB
@@ -63,7 +62,8 @@ fun applicationDependenciesModule(configuration: Configuration): DI.Module =
     }
 
 fun main() {
-    val configuration = buildConfiguration()
+    val configuration =
+        loadConfigurationFromJsonFiles<Configuration>("configuration", "development")
 
     embeddedServer(Netty, port = 8080, host = "localhost") {
             runBlocking {
@@ -85,17 +85,6 @@ suspend fun Application.module(configuration: Configuration, diConfiguration: DI
     configureCallLogging()
     configureRouting()
 }
-
-private fun buildConfiguration(): Configuration =
-    ConfigLoaderBuilder.default()
-        .apply {
-            val environment = "development"
-
-            addResourceSource("/configuration.$environment.json", optional = true)
-            addResourceSource("/configuration.json", optional = true)
-        }
-        .build()
-        .loadConfigOrThrow<Configuration>()
 
 private fun Application.configureSerialization() {
     install(ContentNegotiation) { json() }

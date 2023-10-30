@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":projector"))
     implementation(project(":restapi:models"))
 
+    implementation(common.configuration)
     implementation(common.eventStore)
     implementation(common.eventStore.kodein)
     implementation(common.eventStore.kodein.ktor)

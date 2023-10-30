@@ -54,6 +54,7 @@ dependencyResolutionManagement {
         create("common") {
             val groupId = "com.github.connorwyatt.common-kotlin"
 
+            library("configuration", groupId, "configuration").version(commonVersion)
             library("eventStore", groupId, "eventstore").version(commonVersion)
             library("eventStore-kodein", groupId, "eventstore-kodein").version(commonVersion)
             library("eventStore-kodein-ktor", groupId, "eventstore-kodein-ktor").version(commonVersion)
