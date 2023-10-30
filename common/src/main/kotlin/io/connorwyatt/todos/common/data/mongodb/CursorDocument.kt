@@ -1,6 +1,6 @@
 package io.connorwyatt.todos.common.data.mongodb
 
-import io.connorwyatt.todos.common.data.cursors.Cursor
+import io.connorwyatt.common.eventstore.eventhandlers.EventHandler.Cursor
 import org.bson.codecs.pojo.annotations.BsonId
 
 @CollectionName("cursors")

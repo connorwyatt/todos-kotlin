@@ -1,6 +1,6 @@
 package io.connorwyatt.todos.data.inmemory
 
-import io.connorwyatt.todos.common.data.cursors.Cursor
+import io.connorwyatt.common.eventstore.eventhandlers.EventHandler.Cursor
 import io.connorwyatt.todos.data.TodosRepository
 import io.connorwyatt.todos.data.models.Todo
 

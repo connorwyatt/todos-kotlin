@@ -4,6 +4,10 @@ plugins {
 }
 
 dependencies {
+    implementation(common.eventStore)
+    implementation(common.eventStore.kodein)
+    implementation(common.time.kodein)
+
     implementation(libraries.eventStore.client)
     implementation(libraries.kodein.di)
     implementation(libraries.kodein.di.framework.ktor.server)
@@ -16,7 +20,6 @@ dependencies {
     implementation(libraries.rabbitMQ.client)
 
     testImplementation(testingLibraries.jUnit.jupiter)
-    testImplementation(testingLibraries.jUnit.jupiter.params)
     testImplementation(testingLibraries.strikt.core)
 
     testRuntimeOnly(testingLibraries.jUnit.jupiter.engine)

@@ -24,6 +24,12 @@ dependencies {
     implementation(project(":projector"))
     implementation(project(":restapi:models"))
 
+    implementation(common.eventStore)
+    implementation(common.eventStore.kodein)
+    implementation(common.eventStore.kodein.ktor)
+    implementation(common.time)
+    implementation(common.time.kodein)
+
     implementation(libraries.hoplite.core)
     implementation(libraries.hoplite.json)
     implementation(libraries.logback.classic)
@@ -44,7 +50,6 @@ dependencies {
     testImplementation(libraries.ktor.client.contentNegotiation)
     testImplementation(libraries.ktor.client.core)
     testImplementation(testingLibraries.jUnit.jupiter)
-    testImplementation(testingLibraries.jUnit.jupiter.params)
     testImplementation(testingLibraries.ktor.server.testHost)
     testImplementation(testingLibraries.strikt.core)
 

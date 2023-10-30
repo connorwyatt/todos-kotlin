@@ -2,8 +2,8 @@ package io.connorwyatt.todos.restapi.app
 
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
+import io.connorwyatt.common.eventstore.configureEventStore
 import io.connorwyatt.todos.common.commonDependenciesModule
-import io.connorwyatt.todos.common.configureEventStore
 import io.connorwyatt.todos.common.configureMongoDB
 import io.connorwyatt.todos.common.configureRabbitMQ
 import io.connorwyatt.todos.common.messaging.bindCommandHandler

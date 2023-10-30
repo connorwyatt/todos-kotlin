@@ -1,8 +1,8 @@
 package io.connorwyatt.todos.restapi.app
 
+import io.connorwyatt.common.time.clock.Clock
+import io.connorwyatt.common.time.clock.testing.FakeClock
 import io.connorwyatt.todos.common.models.Optional.Present
-import io.connorwyatt.todos.common.time.clock.Clock
-import io.connorwyatt.todos.common.time.clock.testing.FakeClock
 import io.connorwyatt.todos.restapi.client.HttpTodosClient
 import io.connorwyatt.todos.restapi.models.Todo
 import io.connorwyatt.todos.restapi.models.TodoDefinition
@@ -13,7 +13,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.kodein.di.*
 import strikt.api.expectThat
-import strikt.assertions.*
+import strikt.assertions.isEqualTo
 
 class ApplicationTest {
     @Test

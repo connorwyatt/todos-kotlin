@@ -1,12 +1,13 @@
-package io.connorwyatt.todos.data.mongodb.models
+package io.connorwyatt.todos.data.mongodb
 
 import com.mongodb.client.model.Filters
 import com.mongodb.kotlin.client.coroutine.MongoClient
-import io.connorwyatt.todos.common.data.cursors.Cursor
+import io.connorwyatt.common.eventstore.eventhandlers.EventHandler.Cursor
 import io.connorwyatt.todos.common.data.mongodb.CursorDocument
 import io.connorwyatt.todos.common.data.mongodb.collectionName
 import io.connorwyatt.todos.data.TodosRepository
 import io.connorwyatt.todos.data.models.Todo
+import io.connorwyatt.todos.data.mongodb.models.TodoDocument
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.flow.toList

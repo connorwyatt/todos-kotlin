@@ -1,6 +1,6 @@
 package io.connorwyatt.todos.domain
 
-import io.connorwyatt.todos.common.domain.aggregates.Aggregate
+import io.connorwyatt.common.eventstore.aggregates.Aggregate
 import io.connorwyatt.todos.common.models.Optional
 import io.connorwyatt.todos.common.models.Optional.Present
 import io.connorwyatt.todos.domain.events.TodoAdded

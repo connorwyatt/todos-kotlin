@@ -30,12 +30,14 @@ dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 
     @Suppress("UnstableApiUsage")
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
     versionCatalogs {
+        val commonVersion: String by settings
         val eventStoreClientVersion: String by settings
         val hopliteVersion: String by settings
         val jUnitVersion: String by settings
@@ -48,6 +50,16 @@ dependencyResolutionManagement {
         val mongoDBDriverVersion: String by settings
         val rabbitMQClientVersion: String by settings
         val striktVersion: String by settings
+
+        create("common") {
+            val groupId = "com.github.connorwyatt.common-kotlin"
+
+            library("eventStore", groupId, "eventstore").version(commonVersion)
+            library("eventStore-kodein", groupId, "eventstore-kodein").version(commonVersion)
+            library("eventStore-kodein-ktor", groupId, "eventstore-kodein-ktor").version(commonVersion)
+            library("time", groupId, "time").version(commonVersion)
+            library("time-kodein", groupId, "time-kodein").version(commonVersion)
+        }
 
         create("libraries") {
             library("eventStore-client", "com.eventstore", "db-client-java").version(eventStoreClientVersion)
@@ -87,7 +99,6 @@ dependencyResolutionManagement {
         create("testingLibraries") {
             library("jUnit-jupiter", "org.junit.jupiter", "junit-jupiter").version(jUnitVersion)
             library("jUnit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").version(jUnitVersion)
-            library("jUnit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").version(jUnitVersion)
             library("ktor-server-testHost", "io.ktor", "ktor-server-test-host").version(ktorVersion)
             library("strikt.core", "io.strikt", "strikt-core").version(striktVersion)
         }

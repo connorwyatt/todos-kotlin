@@ -6,7 +6,7 @@ import io.connorwyatt.todos.common.data.mongodb.CursorDocument
 import io.connorwyatt.todos.common.data.mongodb.MongoDBConfiguration
 import io.connorwyatt.todos.common.data.mongodb.bindMongoDBCollection
 import io.connorwyatt.todos.data.inmemory.InMemoryTodosRepository
-import io.connorwyatt.todos.data.mongodb.models.MongoDBTodosRepository
+import io.connorwyatt.todos.data.mongodb.MongoDBTodosRepository
 import io.connorwyatt.todos.data.mongodb.models.TodoDocument
 import org.kodein.di.*
 

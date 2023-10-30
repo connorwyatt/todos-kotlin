@@ -1,10 +1,6 @@
 package io.connorwyatt.todos.common
 
 import io.connorwyatt.todos.common.data.mongodb.MongoDBInitializer
-import io.connorwyatt.todos.common.domain.events.EventsRepository
-import io.connorwyatt.todos.common.domain.eventstore.EventStoreConfiguration
-import io.connorwyatt.todos.common.domain.eventstore.EventStoreSubscriptionsManager
-import io.connorwyatt.todos.common.domain.inmemory.InMemoryEventsRepository
 import io.connorwyatt.todos.common.messaging.RabbitMQConfiguration
 import io.connorwyatt.todos.common.messaging.commands.bus.CommandBus
 import io.connorwyatt.todos.common.messaging.commands.bus.InMemoryCommandBus
@@ -14,18 +10,6 @@ import io.ktor.server.application.*
 import kotlinx.coroutines.launch
 import org.kodein.di.*
 import org.kodein.di.ktor.*
-
-fun Application.configureEventStore(eventStoreConfiguration: EventStoreConfiguration) {
-    if (!eventStoreConfiguration.useInMemoryEventStore) {
-        val eventStoreSubscriptionsManager by closestDI().instance<EventStoreSubscriptionsManager>()
-
-        eventStoreSubscriptionsManager.start()
-    }
-
-    val eventsRepository by closestDI().instance<EventsRepository>()
-
-    (eventsRepository as? InMemoryEventsRepository)?.run { startEventPropagation() }
-}
 
 suspend fun Application.configureMongoDB() {
     val mongoDBInitializer by closestDI().instanceOrNull<MongoDBInitializer>()

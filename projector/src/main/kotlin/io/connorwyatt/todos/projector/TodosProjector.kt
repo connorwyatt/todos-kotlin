@@ -1,11 +1,11 @@
 package io.connorwyatt.todos.projector
 
-import io.connorwyatt.todos.common.data.cursors.Cursor
-import io.connorwyatt.todos.common.domain.eventhandlers.SubscriptionName
-import io.connorwyatt.todos.common.domain.events.EventMetadata
-import io.connorwyatt.todos.common.domain.projector.Projector
-import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
+import io.connorwyatt.common.eventstore.eventhandlers.EventHandler
+import io.connorwyatt.common.eventstore.eventhandlers.SubscriptionName
+import io.connorwyatt.common.eventstore.events.EventMetadata
+import io.connorwyatt.common.eventstore.streams.StreamDescriptor
 import io.connorwyatt.todos.common.models.Optional.Present
+import io.connorwyatt.todos.common.models.Versioned
 import io.connorwyatt.todos.data.TodosRepository
 import io.connorwyatt.todos.data.models.Todo
 import io.connorwyatt.todos.domain.events.TodoAdded
@@ -13,7 +13,7 @@ import io.connorwyatt.todos.domain.events.TodoCompleted
 import io.connorwyatt.todos.domain.events.TodoUpdated
 
 @SubscriptionName("todos-projector")
-class TodosProjector(private val repository: TodosRepository) : Projector() {
+class TodosProjector(private val repository: TodosRepository) : EventHandler() {
 
     init {
         handle<TodoAdded>(::handle)
@@ -82,5 +82,19 @@ class TodosProjector(private val repository: TodosRepository) : Projector() {
             )
 
         repository.updateTodo(updatedTodo)
+    }
+
+    // TODO: Abstract this.
+    private fun isEventHandled(versioned: Versioned, metadata: EventMetadata): Boolean {
+        val expectedVersion = metadata.streamPosition - 1
+
+        return when {
+            versioned.version == expectedVersion -> false
+            versioned.version > expectedVersion -> true
+            else ->
+                throw Exception(
+                    "Expected version $expectedVersion, but found ${versioned.version}."
+                )
+        }
     }
 }

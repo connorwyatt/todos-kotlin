@@ -1,7 +1,7 @@
 package io.connorwyatt.todos.projector
 
-import io.connorwyatt.todos.common.domain.bindEventHandler
-import io.connorwyatt.todos.common.domain.streams.StreamDescriptor
+import io.connorwyatt.common.eventstore.bindEventHandler
+import io.connorwyatt.common.eventstore.streams.StreamDescriptor
 import org.kodein.di.*
 
 val todosProjectorDependenciesModule by
