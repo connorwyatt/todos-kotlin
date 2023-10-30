@@ -58,6 +58,7 @@ dependencyResolutionManagement {
             library("eventStore", groupId, "eventstore").version(commonVersion)
             library("eventStore-kodein", groupId, "eventstore-kodein").version(commonVersion)
             library("eventStore-kodein-ktor", groupId, "eventstore-kodein-ktor").version(commonVersion)
+            library("optional", groupId, "optional").version(commonVersion)
             library("time", groupId, "time").version(commonVersion)
             library("time-kodein", groupId, "time-kodein").version(commonVersion)
         }

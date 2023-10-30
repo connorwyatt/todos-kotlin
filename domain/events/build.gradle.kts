@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":common"))
 
     implementation(common.eventStore)
+    implementation(common.optional)
 
     implementation(libraries.kotlinx.serialization.json)
 }

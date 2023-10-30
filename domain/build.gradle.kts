@@ -6,6 +6,7 @@ dependencies {
 
     implementation(common.eventStore)
     implementation(common.eventStore.kodein)
+    implementation(common.optional)
 
     implementation(libraries.kodein.di)
 }

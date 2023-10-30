@@ -1,8 +1,8 @@
 package io.connorwyatt.todos.restapi.models
 
-import io.connorwyatt.todos.common.serialization.InstantSerializer
+import io.connorwyatt.common.time.serialization.InstantSerializer
 import java.time.Instant
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class Todo(

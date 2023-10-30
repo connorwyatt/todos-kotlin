@@ -6,6 +6,8 @@ plugins {
 dependencies {
     implementation(project(":common"))
 
+    implementation(common.optional)
+
     implementation(libraries.kodein.di)
     implementation(libraries.kotlinx.serialization.json)
 }

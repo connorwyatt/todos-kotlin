@@ -28,6 +28,7 @@ dependencies {
     implementation(common.eventStore)
     implementation(common.eventStore.kodein)
     implementation(common.eventStore.kodein.ktor)
+    implementation(common.optional)
     implementation(common.time)
     implementation(common.time.kodein)
 
@@ -47,6 +48,8 @@ dependencies {
     implementation(libraries.ktor.server.statusPages)
 
     testImplementation(project(":restapi:client"))
+
+    testImplementation(common.optional)
 
     testImplementation(libraries.ktor.client.contentNegotiation)
     testImplementation(libraries.ktor.client.core)

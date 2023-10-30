@@ -1,8 +1,8 @@
 package io.connorwyatt.todos.domain
 
 import io.connorwyatt.common.eventstore.aggregates.Aggregate
-import io.connorwyatt.todos.common.models.Optional
-import io.connorwyatt.todos.common.models.Optional.Present
+import io.connorwyatt.common.optional.Optional
+import io.connorwyatt.common.optional.Optional.Present
 import io.connorwyatt.todos.domain.events.TodoAdded
 import io.connorwyatt.todos.domain.events.TodoCompleted
 import io.connorwyatt.todos.domain.events.TodoUpdated

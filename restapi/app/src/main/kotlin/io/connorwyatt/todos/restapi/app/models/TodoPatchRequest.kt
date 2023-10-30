@@ -1,10 +1,10 @@
 package io.connorwyatt.todos.restapi.app.models
 
-import io.connorwyatt.todos.common.models.Optional
-import io.connorwyatt.todos.common.models.Optional.Absent
-import io.connorwyatt.todos.common.models.Optional.Present
+import io.connorwyatt.common.optional.Optional
+import io.connorwyatt.common.optional.Optional.Absent
+import io.connorwyatt.common.optional.Optional.Present
 import io.connorwyatt.todos.restapi.models.TodoPatch
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class TodoPatchRequest(val title: Optional<String?> = Absent) {

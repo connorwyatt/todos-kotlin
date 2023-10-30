@@ -4,7 +4,7 @@ import io.connorwyatt.common.eventstore.eventhandlers.EventHandler
 import io.connorwyatt.common.eventstore.eventhandlers.SubscriptionName
 import io.connorwyatt.common.eventstore.events.EventMetadata
 import io.connorwyatt.common.eventstore.streams.StreamDescriptor
-import io.connorwyatt.todos.common.models.Optional.Present
+import io.connorwyatt.common.optional.Optional.Present
 import io.connorwyatt.todos.common.models.Versioned
 import io.connorwyatt.todos.data.TodosRepository
 import io.connorwyatt.todos.data.models.Todo
@@ -14,7 +14,6 @@ import io.connorwyatt.todos.domain.events.TodoUpdated
 
 @SubscriptionName("todos-projector")
 class TodosProjector(private val repository: TodosRepository) : EventHandler() {
-
     init {
         handle<TodoAdded>(::handle)
         handle<TodoUpdated>(::handle)

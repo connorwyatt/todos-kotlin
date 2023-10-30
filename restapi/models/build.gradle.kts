@@ -6,5 +6,8 @@ plugins {
 dependencies {
     implementation(project(":common"))
 
+    implementation(common.optional)
+    implementation(common.time)
+
     implementation(libraries.kotlinx.serialization.json)
 }
