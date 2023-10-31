@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":common"))
 
     implementation(common.optional)
+    implementation(common.rabbitmq)
 
     implementation(libraries.kodein.di)
     implementation(libraries.kotlinx.serialization.json)

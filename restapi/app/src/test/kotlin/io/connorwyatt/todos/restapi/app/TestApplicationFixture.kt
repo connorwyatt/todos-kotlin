@@ -4,11 +4,11 @@ import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
 import io.connorwyatt.common.eventstore.events.EventsRepository
 import io.connorwyatt.common.eventstore.events.InMemoryEventsRepository
+import io.connorwyatt.common.rabbitmq.bus.CommandBus
+import io.connorwyatt.common.rabbitmq.bus.InMemoryCommandBus
 import io.connorwyatt.common.time.TimeUtilities
 import io.connorwyatt.common.time.clock.Clock
 import io.connorwyatt.common.time.clock.testing.FakeClock
-import io.connorwyatt.todos.common.messaging.commands.bus.CommandBus
-import io.connorwyatt.todos.common.messaging.commands.bus.InMemoryCommandBus
 import io.ktor.server.testing.*
 import java.time.Duration
 import kotlinx.coroutines.runBlocking

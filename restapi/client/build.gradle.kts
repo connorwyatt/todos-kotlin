@@ -5,7 +5,6 @@ dependencies {
     implementation(project(":restapi:models"))
 
     implementation(common.http)
-    implementation(common.http.kodein)
 
     implementation(libraries.kodein.di)
     implementation(libraries.ktor.client.contentNegotiation)

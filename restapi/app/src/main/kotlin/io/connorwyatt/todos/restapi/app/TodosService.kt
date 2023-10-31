@@ -1,7 +1,7 @@
 package io.connorwyatt.todos.restapi.app
 
-import io.connorwyatt.todos.common.messaging.commands.CommandEnvelope
-import io.connorwyatt.todos.common.messaging.commands.bus.CommandBus
+import io.connorwyatt.common.rabbitmq.CommandEnvelope
+import io.connorwyatt.common.rabbitmq.bus.CommandBus
 import io.connorwyatt.todos.data.TodosRepository
 import io.connorwyatt.todos.messages.commands.AddTodo
 import io.connorwyatt.todos.messages.commands.CompleteTodo

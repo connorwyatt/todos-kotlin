@@ -2,7 +2,7 @@ package io.connorwyatt.todos.messages.commands
 
 import io.connorwyatt.common.optional.Optional
 import io.connorwyatt.common.optional.Optional.Absent
-import io.connorwyatt.todos.common.messaging.commands.Command
+import io.connorwyatt.common.rabbitmq.Command
 import kotlinx.serialization.Serializable
 
 @Serializable

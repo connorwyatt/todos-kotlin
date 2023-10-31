@@ -1,7 +1,7 @@
 package io.connorwyatt.todos.restapi.app
 
 import io.connorwyatt.common.eventstore.aggregates.AggregatesRepository
-import io.connorwyatt.todos.common.messaging.commands.commandhandlers.CommandHandler
+import io.connorwyatt.common.rabbitmq.commandhandlers.CommandHandler
 import io.connorwyatt.todos.domain.Todo
 import io.connorwyatt.todos.messages.commands.UpdateTodo
 

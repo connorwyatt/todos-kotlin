@@ -26,12 +26,10 @@ dependencies {
 
     implementation(common.configuration)
     implementation(common.eventStore)
-    implementation(common.eventStore.kodein)
-    implementation(common.eventStore.kodein.ktor)
     implementation(common.http)
     implementation(common.optional)
+    implementation(common.rabbitmq)
     implementation(common.time)
-    implementation(common.time.kodein)
 
     implementation(libraries.hoplite.core)
     implementation(libraries.hoplite.json)
