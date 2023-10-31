@@ -2,13 +2,13 @@ package io.connorwyatt.todos.restapi.app
 
 import io.connorwyatt.common.configuration.loadConfigurationFromJsonFiles
 import io.connorwyatt.common.eventstore.configureEventStore
+import io.connorwyatt.common.http.validation.ValidationProblemResponse
 import io.connorwyatt.todos.common.commonDependenciesModule
 import io.connorwyatt.todos.common.configureMongoDB
 import io.connorwyatt.todos.common.configureRabbitMQ
 import io.connorwyatt.todos.common.messaging.bindCommandHandler
 import io.connorwyatt.todos.common.messaging.bindCommandQueueDefinition
 import io.connorwyatt.todos.common.messaging.bindCommandRoutingRules
-import io.connorwyatt.todos.common.models.ValidationProblemResponse
 import io.connorwyatt.todos.data.todosDataDependenciesModule
 import io.connorwyatt.todos.domain.todosDomainDependenciesModule
 import io.connorwyatt.todos.messages.commands.AddTodo

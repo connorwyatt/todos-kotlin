@@ -6,6 +6,8 @@ plugins {
 dependencies {
     implementation(common.eventStore)
     implementation(common.eventStore.kodein)
+    implementation(common.http)
+    implementation(common.http.kodein)
     implementation(common.time.kodein)
 
     implementation(libraries.eventStore.client)

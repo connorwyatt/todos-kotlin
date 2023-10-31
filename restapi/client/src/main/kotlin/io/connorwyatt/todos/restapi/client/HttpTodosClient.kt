@@ -1,7 +1,7 @@
 package io.connorwyatt.todos.restapi.client
 
-import io.connorwyatt.todos.common.http.EmptyHttpResult
-import io.connorwyatt.todos.common.http.HttpResult
+import io.connorwyatt.common.http.EmptyHttpResult
+import io.connorwyatt.common.http.HttpResult
 import io.connorwyatt.todos.restapi.models.Todo
 import io.connorwyatt.todos.restapi.models.TodoDefinition
 import io.connorwyatt.todos.restapi.models.TodoPatch

@@ -28,6 +28,7 @@ dependencies {
     implementation(common.eventStore)
     implementation(common.eventStore.kodein)
     implementation(common.eventStore.kodein.ktor)
+    implementation(common.http)
     implementation(common.optional)
     implementation(common.time)
     implementation(common.time.kodein)
