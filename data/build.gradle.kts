@@ -8,5 +8,4 @@ dependencies {
     implementation(common.mongodb)
 
     implementation(libraries.kodein.di)
-    implementation(libraries.mongodb.driver)
 }

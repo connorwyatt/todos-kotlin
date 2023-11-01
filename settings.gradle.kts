@@ -38,8 +38,6 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         val commonVersion: String by settings
-        val eventStoreClientVersion: String by settings
-        val hopliteVersion: String by settings
         val jUnitVersion: String by settings
         val logbackVersion: String by settings
         val logstashLogbackEncoderVersion: String by settings
@@ -47,8 +45,6 @@ dependencyResolutionManagement {
         val kotlinVersion: String by settings
         val kotlinxSerializationVersion: String by settings
         val ktorVersion: String by settings
-        val mongoDBDriverVersion: String by settings
-        val rabbitMQClientVersion: String by settings
         val striktVersion: String by settings
 
         create("common") {
@@ -65,9 +61,6 @@ dependencyResolutionManagement {
         }
 
         create("libraries") {
-            library("eventstore-client", "com.eventstore", "db-client-java").version(eventStoreClientVersion)
-            library("hoplite-core","com.sksamuel.hoplite","hoplite-core").version(hopliteVersion)
-            library("hoplite-json","com.sksamuel.hoplite","hoplite-json").version(hopliteVersion)
             library("logback-classic", "ch.qos.logback", "logback-classic").version(logbackVersion)
             library("logstash-logbackEncoder", "net.logstash.logback", "logstash-logback-encoder").version(logstashLogbackEncoderVersion)
             library("kodein-di", "org.kodein.di", "kodein-di").version(kodeinVersion)
@@ -93,10 +86,6 @@ dependencyResolutionManagement {
             library("ktor-server-netty", "io.ktor", "ktor-server-netty").version(ktorVersion)
             library("ktor-server-requestValidation", "io.ktor","ktor-server-request-validation").version(ktorVersion)
             library("ktor-server-statusPages", "io.ktor","ktor-server-status-pages").version(ktorVersion)
-            library("mongodb-driver", "org.mongodb", "mongodb-driver-kotlin-coroutine").version(mongoDBDriverVersion)
-            library("rabbitmq-client", "com.rabbitmq", "amqp-client").version(
-                rabbitMQClientVersion
-            )
         }
 
         create("testingLibraries") {

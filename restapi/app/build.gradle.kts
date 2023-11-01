@@ -33,8 +33,6 @@ dependencies {
     implementation(common.rabbitmq)
     implementation(common.time)
 
-    implementation(libraries.hoplite.core)
-    implementation(libraries.hoplite.json)
     implementation(libraries.logback.classic)
     implementation(libraries.logstash.logbackEncoder)
     implementation(libraries.kodein.di)

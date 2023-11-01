@@ -1,7 +1,6 @@
 package io.connorwyatt.todos.restapi.app
 
-import com.sksamuel.hoplite.ConfigLoaderBuilder
-import com.sksamuel.hoplite.addResourceSource
+import io.connorwyatt.common.configuration.loadConfigurationFromJsonFiles
 import io.connorwyatt.common.eventstore.events.EventsRepository
 import io.connorwyatt.common.eventstore.events.InMemoryEventsRepository
 import io.connorwyatt.common.rabbitmq.bus.CommandBus
@@ -48,11 +47,4 @@ fun testApplicationFixture(di: DI, block: suspend TestApplicationFixture.() -> U
     }
 }
 
-private val configuration =
-    ConfigLoaderBuilder.default()
-        .apply {
-            addResourceSource("/configuration.test.json")
-            addResourceSource("/configuration.json")
-        }
-        .build()
-        .loadConfigOrThrow<Configuration>()
+private val configuration = loadConfigurationFromJsonFiles<Configuration>("configuration", "test")

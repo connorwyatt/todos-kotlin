@@ -10,7 +10,6 @@ dependencies {
     implementation(common.rabbitmq)
     implementation(common.time)
 
-    implementation(libraries.eventstore.client)
     implementation(libraries.kodein.di)
     implementation(libraries.kodein.di.framework.ktor.server)
     implementation(libraries.kotlin.reflect)
@@ -18,8 +17,6 @@ dependencies {
     implementation(libraries.ktor.client.cio)
     implementation(libraries.ktor.client.core)
     implementation(libraries.ktor.server.core)
-    implementation(libraries.mongodb.driver)
-    implementation(libraries.rabbitmq.client)
 
     testImplementation(testingLibraries.junit.jupiter)
     testImplementation(testingLibraries.strikt.core)
