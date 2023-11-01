@@ -1,6 +1,6 @@
 package io.connorwyatt.todos.data.mongodb.models
 
-import io.connorwyatt.todos.common.data.mongodb.CollectionName
+import io.connorwyatt.common.mongodb.CollectionName
 import io.connorwyatt.todos.data.models.Todo
 import java.time.Instant
 import org.bson.codecs.pojo.annotations.BsonId

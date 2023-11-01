@@ -55,15 +55,17 @@ dependencyResolutionManagement {
             val groupId = "com.github.connorwyatt.common-kotlin"
 
             library("configuration", groupId, "configuration").version(commonVersion)
-            library("eventStore", groupId, "eventstore").version(commonVersion)
+            library("eventstore", groupId, "eventstore").version(commonVersion)
+            library("eventstore-mongodbModels", groupId, "eventstore-mongodb-models").version(commonVersion)
             library("http", groupId, "http").version(commonVersion)
+            library("mongodb", groupId, "mongodb").version(commonVersion)
             library("optional", groupId, "optional").version(commonVersion)
             library("rabbitmq", groupId, "rabbitmq").version(commonVersion)
             library("time", groupId, "time").version(commonVersion)
         }
 
         create("libraries") {
-            library("eventStore-client", "com.eventstore", "db-client-java").version(eventStoreClientVersion)
+            library("eventstore-client", "com.eventstore", "db-client-java").version(eventStoreClientVersion)
             library("hoplite-core","com.sksamuel.hoplite","hoplite-core").version(hopliteVersion)
             library("hoplite-json","com.sksamuel.hoplite","hoplite-json").version(hopliteVersion)
             library("logback-classic", "ch.qos.logback", "logback-classic").version(logbackVersion)
@@ -91,15 +93,15 @@ dependencyResolutionManagement {
             library("ktor-server-netty", "io.ktor", "ktor-server-netty").version(ktorVersion)
             library("ktor-server-requestValidation", "io.ktor","ktor-server-request-validation").version(ktorVersion)
             library("ktor-server-statusPages", "io.ktor","ktor-server-status-pages").version(ktorVersion)
-            library("mongoDB-driver", "org.mongodb", "mongodb-driver-kotlin-coroutine").version(mongoDBDriverVersion)
-            library("rabbitMQ-client", "com.rabbitmq", "amqp-client").version(
+            library("mongodb-driver", "org.mongodb", "mongodb-driver-kotlin-coroutine").version(mongoDBDriverVersion)
+            library("rabbitmq-client", "com.rabbitmq", "amqp-client").version(
                 rabbitMQClientVersion
             )
         }
 
         create("testingLibraries") {
-            library("jUnit-jupiter", "org.junit.jupiter", "junit-jupiter").version(jUnitVersion)
-            library("jUnit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").version(jUnitVersion)
+            library("junit-jupiter", "org.junit.jupiter", "junit-jupiter").version(jUnitVersion)
+            library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").version(jUnitVersion)
             library("ktor-server-testHost", "io.ktor", "ktor-server-test-host").version(ktorVersion)
             library("strikt.core", "io.strikt", "strikt-core").version(striktVersion)
         }

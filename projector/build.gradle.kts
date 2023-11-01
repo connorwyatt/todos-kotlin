@@ -5,7 +5,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":domain:events"))
 
-    implementation(common.eventStore)
+    implementation(common.eventstore)
     implementation(common.optional)
 
     implementation(libraries.kodein.di)

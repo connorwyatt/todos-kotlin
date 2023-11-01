@@ -1,6 +1,6 @@
 package io.connorwyatt.todos.messages.commands
 
-import io.connorwyatt.common.rabbitmq.bindCommandDefinition
+import io.connorwyatt.common.rabbitmq.kodein.bindCommandDefinition
 import org.kodein.di.*
 
 val todosMessagesCommandsDependenciesModule by

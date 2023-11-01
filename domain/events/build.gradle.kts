@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation(project(":common"))
 
-    implementation(common.eventStore)
+    implementation(common.eventstore)
     implementation(common.optional)
 
     implementation(libraries.kotlinx.serialization.json)

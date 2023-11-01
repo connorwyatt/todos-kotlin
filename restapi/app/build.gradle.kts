@@ -25,8 +25,10 @@ dependencies {
     implementation(project(":restapi:models"))
 
     implementation(common.configuration)
-    implementation(common.eventStore)
+    implementation(common.eventstore)
+    implementation(common.eventstore.mongodbModels)
     implementation(common.http)
+    implementation(common.mongodb)
     implementation(common.optional)
     implementation(common.rabbitmq)
     implementation(common.time)
@@ -52,9 +54,9 @@ dependencies {
 
     testImplementation(libraries.ktor.client.contentNegotiation)
     testImplementation(libraries.ktor.client.core)
-    testImplementation(testingLibraries.jUnit.jupiter)
+    testImplementation(testingLibraries.junit.jupiter)
     testImplementation(testingLibraries.ktor.server.testHost)
     testImplementation(testingLibraries.strikt.core)
 
-    testRuntimeOnly(testingLibraries.jUnit.jupiter.engine)
+    testRuntimeOnly(testingLibraries.junit.jupiter.engine)
 }

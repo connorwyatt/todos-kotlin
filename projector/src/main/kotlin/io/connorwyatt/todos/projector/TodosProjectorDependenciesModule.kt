@@ -1,6 +1,6 @@
 package io.connorwyatt.todos.projector
 
-import io.connorwyatt.common.eventstore.bindEventHandler
+import io.connorwyatt.common.eventstore.kodein.bindEventHandler
 import io.connorwyatt.common.eventstore.streams.StreamDescriptor
 import org.kodein.di.*
 

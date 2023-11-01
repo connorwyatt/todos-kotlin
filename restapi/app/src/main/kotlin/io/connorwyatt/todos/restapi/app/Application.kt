@@ -1,14 +1,14 @@
 package io.connorwyatt.todos.restapi.app
 
 import io.connorwyatt.common.configuration.loadConfigurationFromJsonFiles
-import io.connorwyatt.common.eventstore.configureEventStore
+import io.connorwyatt.common.eventstore.ktor.configureEventStore
 import io.connorwyatt.common.http.validation.ValidationProblemResponse
-import io.connorwyatt.common.rabbitmq.bindCommandHandler
-import io.connorwyatt.common.rabbitmq.bindCommandQueueDefinition
-import io.connorwyatt.common.rabbitmq.bindCommandRoutingRules
-import io.connorwyatt.common.rabbitmq.configureRabbitMQ
+import io.connorwyatt.common.mongodb.ktor.configureMongoDB
+import io.connorwyatt.common.rabbitmq.kodein.bindCommandHandler
+import io.connorwyatt.common.rabbitmq.kodein.bindCommandQueueDefinition
+import io.connorwyatt.common.rabbitmq.kodein.bindCommandRoutingRules
+import io.connorwyatt.common.rabbitmq.ktor.configureRabbitMQ
 import io.connorwyatt.todos.common.commonDependenciesModule
-import io.connorwyatt.todos.common.configureMongoDB
 import io.connorwyatt.todos.data.todosDataDependenciesModule
 import io.connorwyatt.todos.domain.todosDomainDependenciesModule
 import io.connorwyatt.todos.messages.commands.AddTodo

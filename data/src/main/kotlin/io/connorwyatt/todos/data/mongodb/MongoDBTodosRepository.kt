@@ -3,8 +3,8 @@ package io.connorwyatt.todos.data.mongodb
 import com.mongodb.client.model.Filters
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import io.connorwyatt.common.eventstore.eventhandlers.EventHandler.Cursor
-import io.connorwyatt.todos.common.data.mongodb.CursorDocument
-import io.connorwyatt.todos.common.data.mongodb.collectionName
+import io.connorwyatt.common.eventstore.mongodbmodels.CursorDocument
+import io.connorwyatt.common.mongodb.collectionName
 import io.connorwyatt.todos.data.TodosRepository
 import io.connorwyatt.todos.data.models.Todo
 import io.connorwyatt.todos.data.mongodb.models.TodoDocument
