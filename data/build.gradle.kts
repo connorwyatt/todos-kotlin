@@ -1,8 +1,7 @@
 plugins { id("org.jetbrains.kotlin.jvm") }
 
 dependencies {
-    implementation(project(":common"))
-
+    implementation(common.data)
     implementation(common.eventstore)
     implementation(common.eventstore.mongodbModels)
     implementation(common.mongodb)

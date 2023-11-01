@@ -1,7 +1,6 @@
 plugins { id("org.jetbrains.kotlin.jvm") }
 
 dependencies {
-    implementation(project(":common"))
     implementation(project(":restapi:models"))
 
     implementation(common.http)

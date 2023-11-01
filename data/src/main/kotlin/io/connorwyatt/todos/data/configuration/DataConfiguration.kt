@@ -1,4 +1,4 @@
-package io.connorwyatt.todos.common.data.configuration
+package io.connorwyatt.todos.data.configuration
 
 data class DataConfiguration(
     val repositoryImplementation: RepositoryImplementation,

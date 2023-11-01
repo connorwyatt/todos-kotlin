@@ -4,8 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
-
     implementation(common.eventstore)
     implementation(common.optional)
 

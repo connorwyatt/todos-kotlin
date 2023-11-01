@@ -3,8 +3,8 @@ package io.connorwyatt.todos.data
 import io.connorwyatt.common.eventstore.mongodbmodels.CursorDocument
 import io.connorwyatt.common.mongodb.configuration.MongoDBConfiguration
 import io.connorwyatt.common.mongodb.kodein.bindMongoDBCollection
-import io.connorwyatt.todos.common.data.configuration.DataConfiguration
-import io.connorwyatt.todos.common.data.configuration.RepositoryImplementation
+import io.connorwyatt.todos.data.configuration.DataConfiguration
+import io.connorwyatt.todos.data.configuration.RepositoryImplementation
 import io.connorwyatt.todos.data.inmemory.InMemoryTodosRepository
 import io.connorwyatt.todos.data.mongodb.MongoDBTodosRepository
 import io.connorwyatt.todos.data.mongodb.models.TodoDocument

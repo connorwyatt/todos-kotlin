@@ -1,5 +1,5 @@
 rootProject.name = "todos"
-include("common")
+
 include("data")
 include("domain")
 include("domain:events")
@@ -51,6 +51,7 @@ dependencyResolutionManagement {
             val groupId = "com.github.connorwyatt.common-kotlin"
 
             library("configuration", groupId, "configuration").version(commonVersion)
+            library("data", groupId, "data").version(commonVersion)
             library("eventstore", groupId, "eventstore").version(commonVersion)
             library("eventstore-mongodbModels", groupId, "eventstore-mongodb-models").version(commonVersion)
             library("http", groupId, "http").version(commonVersion)

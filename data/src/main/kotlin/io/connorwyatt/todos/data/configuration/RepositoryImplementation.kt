@@ -1,4 +1,4 @@
-package io.connorwyatt.todos.common.data.configuration
+package io.connorwyatt.todos.data.configuration
 
 enum class RepositoryImplementation {
     InMemory,

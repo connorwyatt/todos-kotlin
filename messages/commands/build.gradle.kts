@@ -4,8 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
-
     implementation(common.optional)
     implementation(common.rabbitmq)
 

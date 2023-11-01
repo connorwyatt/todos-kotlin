@@ -1,6 +1,6 @@
 package io.connorwyatt.todos.data.models
 
-import io.connorwyatt.todos.common.models.Versioned
+import io.connorwyatt.common.data.models.Versioned
 import java.time.Instant
 
 data class Todo(

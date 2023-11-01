@@ -16,7 +16,6 @@ application {
 }
 
 dependencies {
-    implementation(project(":common"))
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":domain:events"))
@@ -25,6 +24,7 @@ dependencies {
     implementation(project(":restapi:models"))
 
     implementation(common.configuration)
+    implementation(common.data)
     implementation(common.eventstore)
     implementation(common.eventstore.mongodbModels)
     implementation(common.http)
