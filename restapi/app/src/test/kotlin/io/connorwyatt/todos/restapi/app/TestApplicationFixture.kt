@@ -1,16 +1,20 @@
 package io.connorwyatt.todos.restapi.app
 
-import io.connorwyatt.common.configuration.loadConfigurationFromJsonFiles
+import io.connorwyatt.common.eventstore.configuration.EventStoreConfiguration
 import io.connorwyatt.common.eventstore.events.EventsRepository
 import io.connorwyatt.common.eventstore.events.InMemoryEventsRepository
+import io.connorwyatt.common.mongodb.configuration.MongoDBConfiguration
 import io.connorwyatt.common.rabbitmq.bus.CommandBus
 import io.connorwyatt.common.rabbitmq.bus.InMemoryCommandBus
+import io.connorwyatt.common.rabbitmq.configuration.RabbitMQConfiguration
+import io.connorwyatt.common.server.ApplicationConfiguration
 import io.connorwyatt.common.time.TimeUtilities
 import io.connorwyatt.common.time.clock.Clock
 import io.connorwyatt.common.time.clock.testing.FakeClock
+import io.connorwyatt.todos.data.configuration.DataConfiguration
+import io.connorwyatt.todos.data.configuration.RepositoryImplementation
 import io.ktor.server.testing.*
 import java.time.Duration
-import kotlinx.coroutines.runBlocking
 import org.kodein.di.*
 
 class TestApplicationFixture(val applicationTestBuilder: ApplicationTestBuilder, val di: DI) {
@@ -26,25 +30,43 @@ class TestApplicationFixture(val applicationTestBuilder: ApplicationTestBuilder,
     }
 }
 
-fun testApplicationFixture(block: suspend TestApplicationFixture.() -> Unit) {
+suspend fun testApplicationFixture(block: suspend TestApplicationFixture.() -> Unit) {
     testApplicationFixture(
-        DI {
-            import(applicationDependenciesModule(configuration))
-            bindSingleton<Clock>(overrides = true) {
-                FakeClock(TimeUtilities.instantOf(2023, 1, 1, 12, 0, 0))
-            }
-        }
-    ) {
-        block(this)
-    }
+        applicationConfiguration(
+                configuration,
+                listOf(
+                    applicationDependenciesModule(configuration),
+                    testApplicationFixtureDependenciesModule()
+                ),
+            )
+            .allowDIOverrides(true)
+            .build(),
+        block
+    )
 }
 
-fun testApplicationFixture(di: DI, block: suspend TestApplicationFixture.() -> Unit) {
+suspend fun testApplicationFixture(
+    applicationConfiguration: ApplicationConfiguration,
+    block: suspend TestApplicationFixture.() -> Unit
+) {
     testApplication {
-        application { runBlocking { module(configuration, di) } }
+        application { applicationConfiguration.applyTo(this) }
 
-        block(TestApplicationFixture(this, di))
+        block(TestApplicationFixture(this, applicationConfiguration.di))
     }
 }
 
-private val configuration = loadConfigurationFromJsonFiles<Configuration>("configuration", "test")
+private val configuration =
+    Configuration(
+        DataConfiguration(RepositoryImplementation.InMemory),
+        EventStoreConfiguration(null, true),
+        MongoDBConfiguration(null, "todos"),
+        RabbitMQConfiguration(true, null, "todos")
+    )
+
+private fun testApplicationFixtureDependenciesModule(): DI.Module =
+    DI.Module(name = ::testApplicationFixtureDependenciesModule.name) {
+        bindSingleton<Clock>(overrides = true) {
+            FakeClock(TimeUtilities.instantOf(2023, 1, 1, 12, 0, 0))
+        }
+    }

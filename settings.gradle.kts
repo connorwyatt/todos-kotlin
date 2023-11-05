@@ -58,6 +58,7 @@ dependencyResolutionManagement {
             library("mongodb", groupId, "mongodb").version(commonVersion)
             library("optional", groupId, "optional").version(commonVersion)
             library("rabbitmq", groupId, "rabbitmq").version(commonVersion)
+            library("server", groupId, "server").version(commonVersion)
             library("time", groupId, "time").version(commonVersion)
         }
 
@@ -80,11 +81,11 @@ dependencyResolutionManagement {
             )
             library("ktor-server-callId","io.ktor", "ktor-server-call-id").version(ktorVersion)
             library("ktor-server-callLogging","io.ktor", "ktor-server-call-logging").version(ktorVersion)
+            library("ktor-server-cio", "io.ktor", "ktor-server-cio").version(ktorVersion)
             library("ktor-server-contentNegotiation", "io.ktor", "ktor-server-content-negotiation").version(
                 ktorVersion
             )
             library("ktor-server-core", "io.ktor", "ktor-server-core").version(ktorVersion)
-            library("ktor-server-netty", "io.ktor", "ktor-server-netty").version(ktorVersion)
             library("ktor-server-requestValidation", "io.ktor","ktor-server-request-validation").version(ktorVersion)
             library("ktor-server-statusPages", "io.ktor","ktor-server-status-pages").version(ktorVersion)
         }
