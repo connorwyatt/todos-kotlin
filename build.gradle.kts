@@ -7,9 +7,7 @@ plugins {
 
 tasks {
     create("installLocalGitHook") {
-        delete {
-            delete(File(rootDir, ".git/hooks/pre-commit"))
-        }
+        delete { delete(File(rootDir, ".git/hooks/pre-commit")) }
         copy {
             from(File(rootDir, "scripts/pre-commit"))
             into(File(rootDir, ".git/hooks"))
@@ -17,12 +15,10 @@ tasks {
         }
     }
 
-    build {
-        dependsOn("installLocalGitHook")
-    }
+    build { dependsOn("installLocalGitHook") }
 }
 
-subprojects {
+allprojects {
     apply(plugin = "com.diffplug.spotless")
 
     spotless {
@@ -32,7 +28,5 @@ subprojects {
         }
     }
 
-    tasks.withType(Test::class) {
-        useJUnitPlatform()
-    }
+    tasks.withType(Test::class) { useJUnitPlatform() }
 }
