@@ -1,6 +1,6 @@
 rootProject.name = "todos"
 
-val groupId = "com.github.connorwyatt.common-kotlin"
+val commonGroupId = "com.github.connorwyatt.common-kotlin"
 
 val useLocalCommonPackages: Boolean = false
 
@@ -26,7 +26,7 @@ if (useLocalCommonPackages) {
     includeBuild("../common") {
         dependencySubstitution {
             commonPackages.forEach { (_, artifact, project) ->
-                substitute(module("$groupId:$artifact")).using(project(":$project"))
+                substitute(module("$commonGroupId:$artifact")).using(project(":$project"))
             }
         }
     }
@@ -85,7 +85,7 @@ dependencyResolutionManagement {
 
         create("common") {
             commonPackages.forEach { (alias, artifact, _) ->
-                library(alias, groupId, artifact).version(commonVersion)
+                library(alias, commonGroupId, artifact).version(commonVersion)
             }
         }
 
